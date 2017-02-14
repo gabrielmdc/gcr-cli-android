@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private final String ADDRESS = "192.168.1.50";
+    private final String ADDRESS = "192.168.1.54";
     private final int PORT = 10000;
     private Device device;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 new Thread(new Runnable() {
                     public void run() {
-                        final String STATUS = device.sendAction("ON");
+                        final String STATUS = device.sendAction("ON");// TODO STATUS could be null.. fix it
                         ibtnAction.post(new Runnable() {
                             public void run() {
                                 changeBtnActionImage(STATUS);
