@@ -24,14 +24,12 @@ class Sender{
         if(socket == null || !socket.isConnected()){
             socket = new Socket(address, port);
             out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("Sender connected");
         }
     }
 
     void sendMessage(String msg) throws IOException{
         connect();
         out.writeUTF(PRE_MSG + msg);
-        System.out.println("MSG SENDED: "+PRE_MSG + msg);
     }
 
 }
