@@ -6,13 +6,18 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
+import java.net.ServerSocket;
+
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
-    private final String ADDRESS = "192.168.1.54";
-    private final int PORT = 10000;
-    private Device device;
+    private final String ADDRESS = "192.168.1.50";
+    private final int PORT = 10001;
+    private Sender sender;
+    private ReceiverObserver receiverObs;
 
-    private Button btnRefresh;
     private ImageButton ibtnAction;
 
     @Override
@@ -20,58 +25,74 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnRefresh = (Button)findViewById(R.id.btnRefresh);
-        btnRefresh.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        final String STATUS = device.sendAction("INFO");
-                        ibtnAction.post(new Runnable() {
-                            public void run() {
-                                changeBtnActionImage(STATUS);
-                            }
-                        });
-
-                    }
-                }).start();
-            }
-        });
-
         ibtnAction = (ImageButton) findViewById(R.id.ibtnAction);
         ibtnAction.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(final View v) {
                 new Thread(new Runnable() {
                     public void run() {
-                        final String STATUS = device.sendAction("ON");// TODO STATUS could be null.. fix it
-                        ibtnAction.post(new Runnable() {
-                            public void run() {
-                                changeBtnActionImage(STATUS);
+                        if(sender != null && receiverObs != null) {
+                            try {
+                                sender.sendMessage(receiverObs.getNextStatus());
+                            }catch(IOException e){
+                                Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             }
-                        });
-
+                        }
                     }
                 }).start();
             }
         });
+        sender = new Sender(ADDRESS, PORT);
+    }
 
-        device = new Device(ADDRESS, PORT);
+    private void senderConnect() {
+        if(sender != null){
+            try {
+                sender.connect();
+            }catch(IOException e) {
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(PORT);
+            Socket socket = serverSocket.accept();
+
+            Receiver receiver  = new Receiver(socket);
+
+            receiverObs = new ReceiverObserver(ibtnAction);
+            receiver.addObserver(receiverObs);
+
+            Thread t = new Thread(receiver);
+            t.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        } finally {
+            if(serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        refreshControls();
+        senderConnect();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        refreshControls();
+        senderConnect();
     }
 
-    public void refreshControls() {
+    /*public void refreshControls() {
         new Thread(new Runnable() {
             public void run() {
                 device.connect();
@@ -83,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 });
             }
         }).start();
-    }
+    }*/
 
     public void changeBtnActionImage(String status) {
         if(status.compareTo("0") == 0) {
