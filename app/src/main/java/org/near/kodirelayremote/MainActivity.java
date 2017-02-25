@@ -25,9 +25,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-        StrictMode.setThreadPolicy(policy);
-
         ibtnAction = (ImageButton) findViewById(R.id.ibtnAction);
         ibtnAction.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -37,6 +34,7 @@ public class MainActivity extends AppCompatActivity {
                         if(sender != null && receiverObs != null) {
                             try {
                                 sender.sendMessage(receiverObs.getNextStatus());
+                                System.out.println("Message sended");
                             }catch(IOException e){
                                 Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
                             }
@@ -49,38 +47,49 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void senderConnect() {
-        if(sender != null){
-            try {
-                sender.connect();
-            }catch(IOException e) {
-                Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-            }
-        }
 
-        ServerSocket serverSocket = null;
-        try {
-            serverSocket = new ServerSocket(PORT);
-            Socket socket = serverSocket.accept();
-
-            Receiver receiver  = new Receiver(socket);
-
-            receiverObs = new ReceiverObserver(ibtnAction);
-            receiver.addObserver(receiverObs);
-
-            Thread t = new Thread(receiver);
-            t.start();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-        } finally {
-            if(serverSocket != null) {
+        new Thread(new Runnable() {
+            public void run() {
+                ServerSocket serverSocket = null;
                 try {
-                    serverSocket.close();
+                    serverSocket = new ServerSocket(PORT);
+                    Socket socket = serverSocket.accept();
+
+                    Receiver receiver = new Receiver(socket);
+
+                    receiverObs = new ReceiverObserver(ibtnAction);
+                    receiver.addObserver(receiverObs);
+
+                    Thread t = new Thread(receiver);
+                    t.start();
                 } catch (IOException e) {
                     e.printStackTrace();
+                    //Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                } finally {
+                    if (serverSocket != null) {
+                        try {
+                            serverSocket.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
-        }
+        }).start();
+
+        new Thread(new Runnable() {
+            public void run() {
+                if (sender != null) {
+                    try {
+                        sender.connect();
+                        System.out.println("Connected");
+                    } catch (IOException e) {
+                        //Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        System.out.println("Connection fail");
+                    }
+                }
+            }
+        }).start();
     }
 
     @Override
@@ -92,30 +101,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        senderConnect();
-    }
-
-    /*public void refreshControls() {
-        new Thread(new Runnable() {
-            public void run() {
-                device.connect();
-                final String STATUS = device.sendAction("INFO");
-                ibtnAction.post(new Runnable() {
-                    public void run() {
-                        changeBtnActionImage(STATUS);
-                    }
-                });
-            }
-        }).start();
-    }*/
-
-    public void changeBtnActionImage(String status) {
-        if(status.compareTo("0") == 0) {
-            ibtnAction.setImageResource(R.mipmap.button_off);
-            Toast.makeText(this, "Tv is OFF", Toast.LENGTH_SHORT).show();
-        } else {
-            ibtnAction.setImageResource(R.mipmap.button_on);
-            Toast.makeText(this, "TV is ON", Toast.LENGTH_SHORT).show();
-        }
+        //senderConnect();
     }
 }

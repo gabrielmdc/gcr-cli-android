@@ -20,21 +20,26 @@ class Receiver extends Observable implements Runnable{
         DataInputStream in;
         try {
             in = new DataInputStream(socket.getInputStream());
-            do {
+            while (socket.isConnected() && !status.startsWith("END")){
                 readResponse(in);
-            } while (!status.startsWith("END"));
+            }
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
     }
 
+    /**
+     * Require: the socket is connected
+     * @param in
+     * @throws IOException
+     */
     private void readResponse(DataInputStream in) throws IOException {
-        if(socket.isConnected()){
-            byte[] buff = new byte[1];
-            if(in.read(buff) > 0){
-                setStatus(new String(buff,"UTF-8").trim());
-            }
+        byte[] buff = new byte[1];
+        System.out.println("Esperando respuesta...");
+        if(in.read(buff) > 0){
+            setStatus(new String(buff,"UTF-8").trim());
+            System.out.println("Recibido STATUS: " + status);
         }
     }
 
