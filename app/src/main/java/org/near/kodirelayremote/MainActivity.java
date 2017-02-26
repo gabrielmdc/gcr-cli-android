@@ -1,22 +1,19 @@
 package org.near.kodirelayremote;
 
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.Toast;
-import java.net.ServerSocket;
 
 import java.io.IOException;
-import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
     private final String ADDRESS = "192.168.1.50";
     private final int PORT = 10001;
     private Sender sender;
     private ReceiverObserver receiverObs;
+    private Receiver receiver;
 
     private ImageButton ibtnAction;
 
@@ -26,81 +23,68 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         ibtnAction = (ImageButton) findViewById(R.id.ibtnAction);
+        setComponentsEvents();
+        sender = new Sender(ADDRESS, PORT);
+        receiverObs = new ReceiverObserver(ibtnAction, this);
+    }
+
+    private void setComponentsEvents(){
         ibtnAction.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
-                new Thread(new Runnable() {
+                new Thread(new Runnable() {// TODO use AsyncTask
                     public void run() {
                         if(sender != null && receiverObs != null) {
                             try {
                                 sender.sendMessage(receiverObs.getNextStatus());
-                                System.out.println("Message sended");
+                                //Toast.makeText(v.getContext(), "Command sended", Toast.LENGTH_LONG).show();
                             }catch(IOException e){
-                                Toast.makeText(v.getContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(v.getContext(), "Command not sended: "+e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         }
                     }
                 }).start();
             }
         });
-        sender = new Sender(ADDRESS, PORT);
+
     }
 
-    private void senderConnect() {
+    private void connectReceiver(){
+        if(receiver == null) {
+            receiver = new Receiver(PORT);
+            receiver.addObserver(receiverObs);
+            new Thread(receiver).start();
+        }
+    }
 
-        new Thread(new Runnable() {
-            public void run() {
-                ServerSocket serverSocket = null;
-                try {
-                    serverSocket = new ServerSocket(PORT);
-                    Socket socket = serverSocket.accept();
-
-                    Receiver receiver = new Receiver(socket);
-
-                    receiverObs = new ReceiverObserver(ibtnAction);
-                    receiver.addObserver(receiverObs);
-
-                    Thread t = new Thread(receiver);
-                    t.start();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    //Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                } finally {
-                    if (serverSocket != null) {
-                        try {
-                            serverSocket.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
-        }).start();
-
-        new Thread(new Runnable() {
-            public void run() {
-                if (sender != null) {
+    private void connectSender() {
+        if (sender != null) {
+            new Thread(new Runnable() {// TODO use AsynkTask
+                public void run() {
                     try {
                         sender.connect();
-                        System.out.println("Connected");
                     } catch (IOException e) {
-                        //Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
-                        System.out.println("Connection fail");
+                        //Toast.makeText(MainActivity.this, "Connection fail: "+e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-        }).start();
+            }).start();
+        }
+    }
+
+    private void connect() {
+        connectSender();
+        connectReceiver();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        senderConnect();
+        connect();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        //senderConnect();
+        connect();
     }
 }

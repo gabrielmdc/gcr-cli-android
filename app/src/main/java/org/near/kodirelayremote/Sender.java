@@ -3,13 +3,11 @@ package org.near.kodirelayremote;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.net.UnknownHostException;
 
 class Sender{
-
     static final String ON = "ON";
     static final String OFF = "OFF";
-    private final String PRE_MSG = "MSG:";
+    static final String END = "END";
     private Socket socket;
     private DataOutputStream out;
     private String address;
@@ -28,6 +26,7 @@ class Sender{
     }
 
     void sendMessage(String msg) throws IOException{
+        final String PRE_MSG = "MSG:";
         connect();
         out.writeUTF(PRE_MSG + msg);
     }

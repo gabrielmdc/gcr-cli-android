@@ -2,44 +2,54 @@ package org.near.kodirelayremote;
 
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Observable;
 
 class Receiver extends Observable implements Runnable{
 
-    private Socket socket;
     private String status;
+    private int port;
 
-    Receiver(Socket socket){
-        this.socket = socket;
+    Receiver(int port){
+        this.port = port;
         status = "";
     }
 
     @Override
     public void run() {
         DataInputStream in;
+        ServerSocket serverSocket = null;
         try {
+            serverSocket = new ServerSocket(port);
+            Socket socket = serverSocket.accept();
+
             in = new DataInputStream(socket.getInputStream());
-            while (socket.isConnected() && !status.startsWith("END")){
+            while (socket.isConnected() && !status.startsWith(Sender.END)){
                 readResponse(in);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            e.printStackTrace();// TODO Manage this
+        } finally {
+            if (serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();// TODO Manage this
+                }
+            }
         }
     }
 
     /**
      * Require: the socket is connected
-     * @param in
+     * @param in DataInputStream
      * @throws IOException
      */
     private void readResponse(DataInputStream in) throws IOException {
         byte[] buff = new byte[1];
-        System.out.println("Esperando respuesta...");
         if(in.read(buff) > 0){
             setStatus(new String(buff,"UTF-8").trim());
-            System.out.println("Recibido STATUS: " + status);
         }
     }
 

@@ -14,26 +14,17 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Now you can turn ON/OFF your TV ;)"
+        android:text="@string/lbl_text"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
 
-    <Button
-        android:text="REFRESH"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="31dp"
-        android:id="@+id/btnRefresh"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true" />
-
     <ImageButton
+        android:contentDescription="@string/ibtnAction_contentDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:srcCompat="@mipmap/button_off"
-        android:layout_marginTop="34dp"
         android:id="@+id/ibtnAction"
-        android:layout_below="@+id/btnRefresh"
-        android:layout_centerHorizontal="true"
-        android:background="?android:attr/windowBackground" />
+        android:background="?android:attr/windowBackground"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true" />
 </RelativeLayout>
