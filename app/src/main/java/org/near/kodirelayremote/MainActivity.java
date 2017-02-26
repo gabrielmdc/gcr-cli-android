@@ -82,9 +82,4 @@ public class MainActivity extends AppCompatActivity {
         connect();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        connect();
-    }
 }
