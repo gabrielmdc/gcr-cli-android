@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "org.near.kodirelayremote"
         minSdkVersion 17
-        targetSdkVersion 25
+        targetSdkVersion 23
         versionCode 1
         versionName '1.0.0-alpha'
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
