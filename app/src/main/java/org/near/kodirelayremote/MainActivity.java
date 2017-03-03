@@ -10,7 +10,7 @@ import java.io.IOException;
 
 public class MainActivity extends AppCompatActivity {
     private final String ADDRESS = "192.168.1.50";
-    private final int PORT = 10001;
+    private final int PORT = 10000;
     private Sender sender;
     private ReceiverObserver receiverObs;
     private Receiver receiver;
