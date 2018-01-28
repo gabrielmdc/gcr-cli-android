@@ -10,4 +10,5 @@ public interface IServerRepository {
     IServerModel create(String name, String address);
     List<IServerModel> getAll();
     void delete(IServerModel server);
+    IServerModel edit(IServerModel server, String name, String address);
 }

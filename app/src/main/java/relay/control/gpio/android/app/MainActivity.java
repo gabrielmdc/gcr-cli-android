@@ -15,15 +15,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import io.realm.Realm;
-import io.realm.RealmConfiguration;
 import relay.control.gpio.android.R;
 import relay.control.gpio.android.adapters.ServerListAdapter;
 import relay.control.gpio.android.models.IServerModel;
-import relay.control.gpio.android.models.realm.Server;
 import relay.control.gpio.android.repositories.IRepositories;
 import relay.control.gpio.android.repositories.IServerRepository;
 import relay.control.gpio.android.repositories.realm.RealmRepositories;
@@ -76,14 +72,42 @@ public class MainActivity extends AppCompatActivity {
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
         switch(item.getItemId()){
             case R.id.edit_server:
-                break;
+                showEditServerDialog(servers.get(info.position));
+                serverListAdapter.notifyDataSetChanged();
+                return true;
             case R.id.delete_server:
-                deleteServer(servers.get(info.position));
-                servers.remove(info.position);
+                deleteServer(info.position);
                 serverListAdapter.notifyDataSetChanged();
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+    private void showEditServerDialog(final IServerModel server) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit " + server + " server");
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.create_server_dialog, null);
+        builder.setView(viewInflated);
+
+        final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
+        final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
+
+        serverNameEditText.setText(server.getName());
+        serverAddressEditText.setText(server.getAddress());
+
+        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String serverName = serverNameEditText.getText().toString().trim();
+                String serverAddress = serverAddressEditText.getText().toString().trim();
+                if(serverName.length() > 0 && serverAddress.length() > 0) {
+                    editServer(server, serverName, serverAddress);
+                }
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 
     private void showCreateServerDialog() {
@@ -110,10 +134,19 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();
     }
 
-    private void deleteServer(IServerModel server) {
+    private void editServer(IServerModel server, String name, String address) {
         IServerRepository serverRepo = repositories.getServerRepository();
+        server = serverRepo.edit(server, name, address);
+        Toast.makeText(this, "Server '" + server + "' modified", Toast.LENGTH_SHORT).show();
+    }
+
+    private void deleteServer(int position) {
+        IServerModel server = servers.get(position);
+        IServerRepository serverRepo = repositories.getServerRepository();
+        String serverDescription = server.toString();
+        servers.remove(server);
         serverRepo.delete(server);
-        Toast.makeText(this, "Server '" + server + "' deleted", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Server '" + serverDescription + "' deleted", Toast.LENGTH_SHORT).show();
     }
 
     private void createNewServer(String name, String address) {

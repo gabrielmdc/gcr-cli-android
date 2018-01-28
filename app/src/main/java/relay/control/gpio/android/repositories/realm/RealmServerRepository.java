@@ -43,6 +43,16 @@ public class RealmServerRepository implements IServerRepository {
     }
 
     @Override
+    public IServerModel edit(IServerModel server, String name, String address) {
+        realm.beginTransaction();
+        server.setName(name);
+        server.setAddress(address);
+        IServerModel realmObject = realm.copyToRealmOrUpdate((Server)server);
+        realm.commitTransaction();
+        return realmObject;
+    }
+
+    @Override
     public IServerModel findById(int id) {
         return realm.where(Server.class).equalTo("id", id).findFirst();
     }

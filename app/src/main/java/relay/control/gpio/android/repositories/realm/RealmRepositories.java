@@ -4,7 +4,6 @@ import android.content.Context;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
-import relay.control.gpio.android.models.realm.Server;
 import relay.control.gpio.android.repositories.IRepositories;
 import relay.control.gpio.android.repositories.IServerRepository;
 

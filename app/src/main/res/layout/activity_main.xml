@@ -20,6 +20,11 @@
         android:layout_margin="16dp"
         android:src="@drawable/ic_add"
         tools:layout_constraintBottom_toTopOf="parent"
-        tools:layout_constraintEnd_toEndOf="parent" />
+        tools:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_anchorGravity="bottom|end"
+
+        android:layout_gravity="bottom|end"
+        android:layout_alignParentEnd="true"/>
 
 </android.support.constraint.ConstraintLayout>
