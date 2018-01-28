@@ -1,5 +1,3 @@
 <resources>
     <string name="app_name">Kodi Relay Remote</string>
-    <string name="ibtnAction_contentDescription">Send status</string>
-    <string name="lbl_text">Now you can turn ON/OFF your TV ;)</string>
 </resources>
