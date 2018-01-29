@@ -9,25 +9,30 @@ import relay.control.gpio.android.repositories.IServerRepository;
 
 public class RealmRepositories implements IRepositories {
 
-    private Realm realm;
     private IServerRepository serverRepository;
 
-    public RealmRepositories(Context context) {
-        Realm.init(context);
-        setUpConfiguration();
-        realm = Realm.getDefaultInstance();
-        serverRepository = new RealmServerRepository(realm);
-    }
-
+    @Override
     public IServerRepository getServerRepository() {
+        if(serverRepository == null) {
+            Realm realm = Realm.getDefaultInstance();
+            serverRepository = new RealmServerRepository(realm);
+        }
         return serverRepository;
     }
 
+    @Override
     public void closeConnection() {
+        Realm realm = Realm.getDefaultInstance();
         realm.close();
     }
 
-    private static void setUpConfiguration() {
+    @Override
+    public void openConnection(Context context) {
+        Realm.init(context);
+        setUpConfiguration();
+    }
+
+    private void setUpConfiguration() {
         RealmConfiguration config = new RealmConfiguration
                 .Builder()
                 .deleteRealmIfMigrationNeeded()

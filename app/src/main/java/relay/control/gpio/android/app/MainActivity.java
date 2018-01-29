@@ -1,6 +1,7 @@
 package relay.control.gpio.android.app;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -18,13 +19,14 @@ import android.widget.Toast;
 import java.util.List;
 
 import relay.control.gpio.android.R;
+import relay.control.gpio.android.activities.RelayActivity;
 import relay.control.gpio.android.adapters.ServerListAdapter;
 import relay.control.gpio.android.models.IServerModel;
 import relay.control.gpio.android.repositories.IRepositories;
 import relay.control.gpio.android.repositories.IServerRepository;
 import relay.control.gpio.android.repositories.realm.RealmRepositories;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ListView serverListView;
     private List<IServerModel> servers;
@@ -38,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Get servers from data base
-        repositories = new RealmRepositories(this);
+        dataBaseSetUp();
         IServerRepository serverRepo = repositories.getServerRepository();
         servers = serverRepo.getAll();
 
@@ -55,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
                 showCreateServerDialog();
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+        Intent intent = new Intent(MainActivity.this, RelayActivity.class);
+        IServerModel serverSelected = servers.get(position);
+        intent.putExtra("serverId", serverSelected.getId());
+        startActivity(intent);
     }
 
     @Override
@@ -86,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
     private void showEditServerDialog(final IServerModel server) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit " + server + " server");
-        View viewInflated = LayoutInflater.from(this).inflate(R.layout.create_server_dialog, null);
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
 
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
@@ -113,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     private void showCreateServerDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Add new server");
-        View viewInflated = LayoutInflater.from(this).inflate(R.layout.create_server_dialog, null);
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
 
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
@@ -155,5 +165,10 @@ public class MainActivity extends AppCompatActivity {
         servers.add(server);
         serverListAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Server '" + server + "' added", Toast.LENGTH_SHORT).show();
+    }
+
+    private void dataBaseSetUp() {
+        repositories = new RealmRepositories();
+        repositories.openConnection(this);
     }
 }

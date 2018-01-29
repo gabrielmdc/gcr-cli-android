@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+        <TextView
+            android:id="@+id/relayNameTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="100dp"
+            android:text="Relay name" />
+
+        <Switch
+            android:id="@+id/relayStateSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Status "/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
