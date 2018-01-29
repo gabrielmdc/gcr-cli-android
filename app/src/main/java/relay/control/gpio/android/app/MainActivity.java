@@ -49,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         serverListView = findViewById(R.id.serverListView);
         serverListView.setAdapter(serverListAdapter);
         registerForContextMenu(serverListView);
+        serverListView.setOnItemClickListener(this);
 
         createServerFloatingButton = findViewById(R.id.createServerFloatingButton);
         createServerFloatingButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
