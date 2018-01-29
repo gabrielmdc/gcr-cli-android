@@ -9,7 +9,7 @@ public class Relay implements IRelay {
     private boolean inverted;
     private boolean toDelete;
 
-    Relay(int id, String name, int gpio, boolean status, boolean inverted, boolean toDelete) {
+    public Relay(int id, String name, int gpio, boolean status, boolean inverted, boolean toDelete) {
         this.id = id;
         this.name = name;
         this.gpio = gpio;
