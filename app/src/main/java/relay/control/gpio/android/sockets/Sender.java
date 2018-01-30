@@ -26,12 +26,12 @@ public class Sender {
     private String address;
     private int port;
 
-    Sender(String address, int port) {
+    public Sender(String address, int port) {
         this.address = address;
         this.port = port;
     }
 
-    public void connect() throws UnknownHostException, IOException{
+    public void connect() throws IOException{
         if(socket == null || !socket.isConnected()){
             socket = new Socket(address, port);
             out = new DataOutputStream(socket.getOutputStream());
@@ -39,7 +39,7 @@ public class Sender {
         }
     }
 
-    public void sendMessage(String msg) throws UnknownHostException, IOException{
+    public void sendMessage(String msg) throws IOException{
         final String PRE_MSG = ":";
         connect();
         String msgToSend = PRE_MSG + msg;

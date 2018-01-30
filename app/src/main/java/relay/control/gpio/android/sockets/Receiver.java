@@ -1,7 +1,11 @@
 package relay.control.gpio.android.sockets;
 
+import android.util.SparseArray;
+import android.util.SparseIntArray;
 import android.widget.Toast;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Observable;
 
 import org.json.JSONArray;
@@ -14,13 +18,14 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import relay.control.gpio.android.models.IRelay;
 import relay.control.gpio.android.models.Relay;
 
 public class Receiver extends Observable implements Runnable {
 
     private Socket socket;
 
-    Receiver(Socket socket){
+    public Receiver(Socket socket){
         this.socket = socket;
     }
 
@@ -38,8 +43,8 @@ public class Receiver extends Observable implements Runnable {
         }
     }
 
-    private List<Relay> getRelaysFromJsonMsg(String msg) {
-        List<Relay> relays = new ArrayList<>();
+    private SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
+        SparseArray<IRelay> relays = new SparseArray<>();
         JSONArray arr;
         try {
             arr = new JSONArray(msg);
@@ -53,7 +58,7 @@ public class Receiver extends Observable implements Runnable {
                 boolean inverted = Boolean.parseBoolean(obj.getString("inverted"));
                 System.out.println(inverted);
                 Relay relay = new Relay(id, name, gpio, status, inverted, toDelete);
-                relays.add(relay);
+                relays.put(id, relay);
             }
         } catch (JSONException e) {
             //Toast.makeText()
@@ -73,7 +78,7 @@ public class Receiver extends Observable implements Runnable {
             String msgBack = new String(buff,"UTF-8").trim();
             System.out.println("Recibido Mensaje: " + msgBack);
 
-            List<Relay> relays = getRelaysFromJsonMsg(msgBack);
+            SparseArray<IRelay> relays = getRelaysFromJsonMsg(msgBack);
             setChanged();
             notifyObservers(relays);
         }
