@@ -1,11 +1,6 @@
 package relay.control.gpio.android.sockets;
 
 import android.util.SparseArray;
-import android.util.SparseIntArray;
-import android.widget.Toast;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Observable;
 
 import org.json.JSONArray;
@@ -15,8 +10,6 @@ import org.json.JSONObject;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
 
 import relay.control.gpio.android.models.IRelay;
 import relay.control.gpio.android.models.Relay;
@@ -43,7 +36,7 @@ public class Receiver extends Observable implements Runnable {
         }
     }
 
-    private SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
+    static public SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
         SparseArray<IRelay> relays = new SparseArray<>();
         JSONArray arr;
         try {
@@ -61,7 +54,7 @@ public class Receiver extends Observable implements Runnable {
                 relays.put(id, relay);
             }
         } catch (JSONException e) {
-            //Toast.makeText()
+            e.getStackTrace();
         }
         return relays;
     }
@@ -78,9 +71,9 @@ public class Receiver extends Observable implements Runnable {
             String msgBack = new String(buff,"UTF-8").trim();
             System.out.println("Recibido Mensaje: " + msgBack);
 
-            SparseArray<IRelay> relays = getRelaysFromJsonMsg(msgBack);
+            //SparseArray<IRelay> relays = getRelaysFromJsonMsg(msgBack);
             setChanged();
-            notifyObservers(relays);
+            notifyObservers(msgBack);
         }
     }
 }

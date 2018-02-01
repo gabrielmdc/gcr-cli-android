@@ -20,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.RelayActivity"></activity>
+
+        <service android:name=".services.ReceiverService" />
     </application>
 
 </manifest>
