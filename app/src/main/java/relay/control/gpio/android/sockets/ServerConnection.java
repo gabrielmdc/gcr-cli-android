@@ -27,11 +27,21 @@ public class ServerConnection extends Observable {
     public void connect(String address, int port) throws IOException {
         ReceiverService.start(port, context);
         try {
-            Thread.sleep(1000);
+            Thread.sleep(1000);// TODO: check if the receiver is already connected, then the sender can be connected
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         senderConnection(address, port);
+    }
+
+    public void closeConnection() {
+        try {
+            senderSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Intent requestIntent = new Intent(context, ReceiverService.class);
+        context.stopService(requestIntent);
     }
 
     public void sendMessage(String msg) throws IOException {

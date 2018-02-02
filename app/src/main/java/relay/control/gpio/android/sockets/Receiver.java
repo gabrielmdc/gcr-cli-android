@@ -1,6 +1,8 @@
 package relay.control.gpio.android.sockets;
 
 import android.util.SparseArray;
+
+import java.net.SocketException;
 import java.util.Observable;
 
 import org.json.JSONArray;
@@ -27,13 +29,14 @@ public class Receiver extends Observable implements Runnable {
         DataInputStream in;
         try {
             in = new DataInputStream(socket.getInputStream());
-            while (socket.isConnected()){
+            while (socket != null && !socket.isClosed()){
                 readResponse(in);
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
+        System.out.println("Receiver termina...");
     }
 
     static public SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
@@ -49,7 +52,6 @@ public class Receiver extends Observable implements Runnable {
                 boolean status = obj.getString("status").equals("1");
                 boolean toDelete = Boolean.parseBoolean(obj.getString("deleted"));
                 boolean inverted = Boolean.parseBoolean(obj.getString("inverted"));
-                System.out.println(inverted);
                 Relay relay = new Relay(id, name, gpio, status, inverted, toDelete);
                 relays.put(id, relay);
             }
@@ -74,6 +76,8 @@ public class Receiver extends Observable implements Runnable {
             //SparseArray<IRelay> relays = getRelaysFromJsonMsg(msgBack);
             setChanged();
             notifyObservers(msgBack);
+            return;
         }
+        socket.close();
     }
 }

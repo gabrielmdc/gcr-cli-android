@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -16,9 +18,11 @@ import relay.control.gpio.android.sockets.Receiver;
 public class ReceiverService extends IntentService implements Observer {
 
     public static final String CANONICAL_NAME = ReceiverService.class.getCanonicalName();
-    public static final String ACTION_TO =  CANONICAL_NAME + ".ACTION_TO";
-    public static final String EXTRA_TARGET =  CANONICAL_NAME + ".EXTRA_TARGET";
-    public static final String EVENT_FINISHED =  CANONICAL_NAME + ".FINISHED";
+    public static final String ACTION_TO = CANONICAL_NAME + ".ACTION_TO";
+    public static final String EXTRA_TARGET = CANONICAL_NAME + ".EXTRA_TARGET";
+    public static final String EVENT_FINISHED = CANONICAL_NAME + ".FINISHED";
+
+    private Socket receiverSocket;
 
     public ReceiverService() {
         super("ReceiverService");
@@ -35,12 +39,17 @@ public class ReceiverService extends IntentService implements Observer {
     protected void onHandleIntent(Intent intent) {
         final int port = intent.getExtras().getInt(EXTRA_TARGET);
         try {
-            ServerSocket serverSocket = new ServerSocket(port);
-            Socket socket = serverSocket.accept();
-            Receiver receiver = new Receiver(socket);
+            final ServerSocket serverSocket = new ServerSocket();
+            // In case that the connection was closed but still bounded (Very rare case)
+            serverSocket.setReuseAddress(true);
+            serverSocket.bind(new InetSocketAddress(port));
+
+            receiverSocket = serverSocket.accept();
+            Receiver receiver = new Receiver(receiverSocket);
             receiver.addObserver(this);
             Thread receiverThread = new Thread(receiver);
             receiverThread.start();
+            serverSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
             Thread.currentThread().interrupt();
@@ -51,6 +60,18 @@ public class ReceiverService extends IntentService implements Observer {
     public void update(Observable o, Object arg) {
         String relaysJson = (String)arg;
         sendBroadCast(relaysJson);
+    }
+
+    @Override
+    public boolean stopService(Intent intent) {
+        if(receiverSocket.isConnected()) {
+            try {
+                receiverSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return super.stopService(intent);
     }
 
     private void sendBroadCast(String relaysJson){

@@ -41,6 +41,12 @@ public class RelayActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        relayListAdapter.closeConnection();
+        super.onDestroy();
+    }
+
     private void setServerFromIntent() {
         if(getIntent().getExtras() != null){
             int serverId = getIntent().getExtras().getInt("serverId");

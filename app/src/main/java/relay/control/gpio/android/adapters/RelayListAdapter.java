@@ -41,6 +41,10 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         connectionTask.execute();
     }
 
+    public void closeConnection() {
+        serverConnection.closeConnection();
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
