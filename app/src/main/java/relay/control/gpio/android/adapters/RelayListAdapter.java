@@ -17,6 +17,7 @@ import java.util.Observer;
 
 import relay.control.gpio.android.R;
 import relay.control.gpio.android.models.IRelay;
+import relay.control.gpio.android.services.ReceiverService;
 import relay.control.gpio.android.sockets.Sender;
 import relay.control.gpio.android.sockets.ServerConnection;
 
@@ -39,9 +40,6 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         serverConnection = new ServerConnection(context, address, port);
         serverConnection.addReceiverObserver(this);
         serverConnection.addConnectionObserver(new connectionObserver());
-        serverConnection.addObserver(this);
-//        ConnectionTask connectionTask = new ConnectionTask(port, address);
-//        connectionTask.execute();
         try {
             serverConnection.connect();
         } catch (IOException e) {
@@ -125,28 +123,6 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         private Switch relayStatusSwitch;
     }
 
-//    private class ConnectionTask extends AsyncTask<Void, Void, Boolean> {
-//
-//        private String address;
-//        private int port;
-//
-//        ConnectionTask(int port, String address) {
-//            this.address = address;
-//            this.port = port;
-//        }
-//
-//        @Override
-//        protected Boolean doInBackground(Void... voids) {
-//            try {
-//                serverConnection.connect();
-//                return true;
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//            return false;
-//        }
-//    }
-
     private class ActionSenderTask extends AsyncTask<Void, Void, Boolean> {
 
         private int relayId;
@@ -174,7 +150,17 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
 
         @Override
         public void update(Observable o, Object arg) {
-            Toast.makeText(context, "Connected", Toast.LENGTH_SHORT);
+            String msg = arg != null? (String)arg : "";
+//            if (msg == ReceiverService.ACTION_CONNECTION_WAITING) {
+//                Toast.makeText(context, "Receiver waiting", Toast.LENGTH_SHORT).show();
+//            }
+//            if (msg == ServerConnection.SENDER_CONNECTED) {
+//                Toast.makeText(context, "Sender connected", Toast.LENGTH_SHORT).show();
+//            }
+            if (msg == ReceiverService.ACTION_CONNECTED) {
+                Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+            }
+
         }
     }
 }

@@ -16,7 +16,9 @@ import java.util.Observer;
 import relay.control.gpio.android.models.IRelay;
 import relay.control.gpio.android.services.ReceiverService;
 
-public class ServerConnection extends Observable {
+public class ServerConnection {
+
+    public static final String SENDER_CONNECTED = "sender_connected";
 
     private Context context;
     private Socket senderSocket;
@@ -37,14 +39,6 @@ public class ServerConnection extends Observable {
 
     public void connect() throws IOException {
         ReceiverService.start(port, context);
-        // TODO
-//        try {
-//            Thread.sleep(500);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//
-//        senderConnection(address, port);
     }
 
     public void closeConnection() {
@@ -87,19 +81,16 @@ public class ServerConnection extends Observable {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if( action == ReceiverService.ACTION_CONNECTION_WAITING) {
+                connectionObservable.setChangedAndNotify(ReceiverService.ACTION_CONNECTION_WAITING);
                 SenderConnectionTask t = new SenderConnectionTask(address, port);
                 t.execute();
             } else if( action == ReceiverService.ACTION_CONNECTED) {
                 System.out.println("Receiver connected...");
-                connectionObservable.changed();
-                connectionObservable.notifyObservers(ReceiverService.ACTION_CONNECTED);
+                connectionObservable.setChangedAndNotify(ReceiverService.ACTION_CONNECTED);
             } else if(action == ReceiverService.ACTION_RECEIVED) {
                 String relaysJson = intent.getStringExtra(ReceiverService.EXTRA);
                 SparseArray<IRelay> relays = Receiver.getRelaysFromJsonMsg(relaysJson);
-                setChanged();
-                notifyObservers(relays);
-//                receiverObservable.changed();
-//                receiverObservable.notifyObservers(relays);
+                receiverObservable.setChangedAndNotify(relays);
             }
         }
     }
@@ -120,7 +111,6 @@ public class ServerConnection extends Observable {
                 Sender sender = new Sender();
                 try {
                     senderSocket = sender.connect(address, port);
-                    connectionObservable.notifyObservers(ReceiverService.ACTION_CONNECTION_WAITING);
                     return true;
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -130,11 +120,20 @@ public class ServerConnection extends Observable {
             }
             return false;
         }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(result) {
+                connectionObservable.setChangedAndNotify(SENDER_CONNECTED);
+            }
+        }
+
     }
 
     private class ServerObservable extends Observable {
-        public void changed() {
+        public void setChangedAndNotify(Object arg) {
             setChanged();
+            notifyObservers(arg);
         }
     }
 }

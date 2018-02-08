@@ -1,7 +1,6 @@
 package relay.control.gpio.android.services;
 
 import android.app.IntentService;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
@@ -50,8 +49,7 @@ public class ReceiverService extends IntentService implements Observer {
             receiverSocket = serverSocket.accept();
             System.out.println("Receiver connected...");
 
-            String address = receiverSocket.getInetAddress().getHostAddress();
-            sendConnectedBroadCast(address);
+            sendConnectedBroadCast();
             Receiver receiver = new Receiver(receiverSocket);
             receiver.addObserver(this);
             Thread receiverThread = new Thread(receiver);
@@ -88,11 +86,10 @@ public class ReceiverService extends IntentService implements Observer {
         broadcastManager.sendBroadcast(resultIntent);
     }
 
-    private void sendConnectedBroadCast(String address){
+    private void sendConnectedBroadCast(){
         LocalBroadcastManager broadcastManager = LocalBroadcastManager
                 .getInstance(ReceiverService.this);
         Intent resultIntent = new Intent(ACTION_CONNECTED);
-//        resultIntent.putExtra(EXTRA, address);
         broadcastManager.sendBroadcast(resultIntent);
     }
 

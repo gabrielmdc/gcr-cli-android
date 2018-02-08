@@ -2,7 +2,6 @@ package relay.control.gpio.android.sockets;
 
 import android.util.SparseArray;
 
-import java.net.SocketException;
 import java.util.Observable;
 
 import org.json.JSONArray;

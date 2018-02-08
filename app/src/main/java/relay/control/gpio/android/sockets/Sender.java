@@ -32,7 +32,6 @@ public class Sender {
         if(socket != null && socket.isConnected()){
             this.socket = socket;
             out = new DataOutputStream(socket.getOutputStream());
-            System.out.println("Sender connected");
         }
         return socket;
     }
