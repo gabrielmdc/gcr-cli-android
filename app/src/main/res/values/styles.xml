@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="RelaysSplash" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/relays_splash</item>
+    </style>
+
 </resources>

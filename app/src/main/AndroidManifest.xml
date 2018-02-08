@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="relay.control.gpio.android">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
         android:allowBackup="true"
@@ -19,9 +19,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RelayActivity"></activity>
+        <activity android:name=".activities.RelayActivity" />
 
         <service android:name=".services.ReceiverService" />
+
+        <activity
+            android:name=".activities.RelaysSplashActivity"
+            android:theme="@style/RelaysSplash" />
     </application>
 
 </manifest>

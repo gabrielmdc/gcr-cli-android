@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -32,13 +33,20 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         this.layout = layout;
 
         this.relays = new SparseArray<>();
-        serverConnection = new ServerConnection(context);
-        serverConnection.addObserver(this);
     }
 
     public void startConnection(int port, String address) {
-        ConnectionTask connectionTask = new ConnectionTask(port, address);
-        connectionTask.execute();
+        serverConnection = new ServerConnection(context, address, port);
+        serverConnection.addReceiverObserver(this);
+        serverConnection.addConnectionObserver(new connectionObserver());
+        serverConnection.addObserver(this);
+//        ConnectionTask connectionTask = new ConnectionTask(port, address);
+//        connectionTask.execute();
+        try {
+            serverConnection.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void closeConnection() {
@@ -117,29 +125,27 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         private Switch relayStatusSwitch;
     }
 
-    private class ConnectionTask extends AsyncTask<Void, Void, Boolean> {
-
-        private String address;
-        private int port;
-
-        ConnectionTask(int port, String address) {
-            this.address = address;
-            this.port = port;
-        }
-
-        @Override
-        protected Boolean doInBackground(Void... voids) {
-            try {
-                serverConnection.connect(address, port);
-                if(serverConnection.senderIsConnected()){
-                    return true;
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return false;
-        }
-    }
+//    private class ConnectionTask extends AsyncTask<Void, Void, Boolean> {
+//
+//        private String address;
+//        private int port;
+//
+//        ConnectionTask(int port, String address) {
+//            this.address = address;
+//            this.port = port;
+//        }
+//
+//        @Override
+//        protected Boolean doInBackground(Void... voids) {
+//            try {
+//                serverConnection.connect();
+//                return true;
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//            return false;
+//        }
+//    }
 
     private class ActionSenderTask extends AsyncTask<Void, Void, Boolean> {
 
@@ -161,6 +167,14 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
                 e.printStackTrace();
             }
             return false;
+        }
+    }
+
+    private class connectionObserver implements Observer{
+
+        @Override
+        public void update(Observable o, Object arg) {
+            Toast.makeText(context, "Connected", Toast.LENGTH_SHORT);
         }
     }
 }
