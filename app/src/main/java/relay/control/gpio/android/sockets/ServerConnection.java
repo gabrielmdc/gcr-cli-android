@@ -19,6 +19,7 @@ import relay.control.gpio.android.services.ReceiverService;
 public class ServerConnection {
 
     public static final String SENDER_CONNECTED = "sender_connected";
+    public static final String SENDER_REFUSED = "sender_refused";
 
     private Context context;
     private Socket senderSocket;
@@ -43,7 +44,9 @@ public class ServerConnection {
 
     public void closeConnection() {
         try {
-            senderSocket.close();
+            if(senderSocket != null && !senderSocket.isClosed()){
+                senderSocket.close();
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -51,10 +54,35 @@ public class ServerConnection {
         context.stopService(requestIntent);
     }
 
-    public void sendMessage(String msg) throws IOException {
-        Sender sender = new Sender();
-        sender.connect(senderSocket);
-        sender.sendMessage(msg);
+    public void createRelay(String name, int port, boolean inverted) throws IOException {
+        if(name.isEmpty()) {
+            return;
+        }
+        Sender sender = getSenderReady();
+        sender.sendAdd(name, port, inverted);
+    }
+
+    public void editRelay(int relayId, String name, int port, boolean inverted) throws IOException {
+        if(name.isEmpty()) {
+            return;
+        }
+        Sender sender = getSenderReady();
+        sender.sendEdit(relayId, name, port, inverted);
+    }
+
+    public void deleteRelay(int relayId) throws IOException {
+        Sender sender = getSenderReady();
+        sender.sendDelete(relayId);
+    }
+
+    public void turnOnRelay(int... relayIds) throws IOException {
+        Sender sender = getSenderReady();
+        sender.sendStatusOn(relayIds);
+    }
+
+    public void turnOffRelay(int... relayIds) throws IOException {
+        Sender sender = getSenderReady();
+        sender.sendStatusOff(relayIds);
     }
 
     public void addReceiverObserver(Observer o) {
@@ -63,6 +91,12 @@ public class ServerConnection {
 
     public void addConnectionObserver(Observer o) {
         connectionObservable.addObserver(o);
+    }
+
+    private Sender getSenderReady() throws IOException {
+        Sender sender = new Sender();
+        sender.connect(senderSocket);
+        return sender;
     }
 
     private void mountBroadCastReceiver(Context context) {
@@ -125,13 +159,15 @@ public class ServerConnection {
         protected void onPostExecute(Boolean result) {
             if(result) {
                 connectionObservable.setChangedAndNotify(SENDER_CONNECTED);
+                return;
             }
+            connectionObservable.setChangedAndNotify(SENDER_REFUSED);
         }
 
     }
 
     private class ServerObservable extends Observable {
-        public void setChangedAndNotify(Object arg) {
+        private void setChangedAndNotify(Object arg) {
             setChanged();
             notifyObservers(arg);
         }

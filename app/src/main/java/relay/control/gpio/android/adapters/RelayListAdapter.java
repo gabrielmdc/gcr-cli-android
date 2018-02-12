@@ -1,5 +1,6 @@
 package relay.control.gpio.android.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.SparseArray;
@@ -21,7 +22,7 @@ import relay.control.gpio.android.services.ReceiverService;
 import relay.control.gpio.android.sockets.Sender;
 import relay.control.gpio.android.sockets.ServerConnection;
 
-public class RelayListAdapter extends BaseAdapter implements Observer{
+public class RelayListAdapter extends BaseAdapter implements Observer {
 
     private Context context;
     private int layout;
@@ -51,6 +52,10 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         serverConnection.closeConnection();
     }
 
+    public ServerConnection getServerConnection() {
+        return serverConnection;
+    }
+
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
@@ -74,8 +79,10 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         viewHolder.relayStatusSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String status = currentRelay.isOn()? Sender.STATUS_OFF : Sender.STATUS_ON;
-                ActionSenderTask actionSenderTask = new ActionSenderTask(currentRelay.getId(), status);
+//                String status = currentRelay.isOn()? Sender.STATUS_OFF : Sender.STATUS_ON;
+//                ActionSenderTask actionSenderTask = new ActionSenderTask(currentRelay.getId(), status);
+                boolean nextStatus = !currentRelay.isOn();
+                ActionSenderTask actionSenderTask = new ActionSenderTask(currentRelay.getId(), nextStatus);
                 actionSenderTask.execute();
             }
         });
@@ -115,7 +122,8 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
 
     @Override
     public long getItemId(int position) {
-        return position;
+        int key = relays.keyAt(position);
+        return key;
     }
 
     private static class ViewHolder {
@@ -126,9 +134,9 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
     private class ActionSenderTask extends AsyncTask<Void, Void, Boolean> {
 
         private int relayId;
-        private String status;
+        private boolean status;
 
-        ActionSenderTask(int relayId, String status) {
+        ActionSenderTask(int relayId, boolean status) {
             this.relayId = relayId;
             this.status = status;
         }
@@ -136,8 +144,13 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-                String msg = "STATUS:" + relayId + ":" + status;
-                serverConnection.sendMessage(msg);
+//                String msg = "STATUS:" + relayId + ":" + status;
+//                serverConnection.sendMessage(msg);
+                if(status) {
+                    serverConnection.turnOnRelay(relayId);
+                    return true;
+                }
+                serverConnection.turnOffRelay(relayId);
                 return true;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -159,6 +172,12 @@ public class RelayListAdapter extends BaseAdapter implements Observer{
 //            }
             if (msg == ReceiverService.ACTION_CONNECTED) {
                 Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show();
+            }
+            if (msg == ServerConnection.SENDER_REFUSED) {
+                Toast.makeText(context, "Connection refused", Toast.LENGTH_SHORT).show();
+                closeConnection();
+                Activity a = (Activity)context;
+                a.finish();
             }
 
         }
