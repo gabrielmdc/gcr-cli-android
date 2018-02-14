@@ -96,12 +96,12 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
             int key = relaysFromReceiver.keyAt(i);
             IRelay relayFromReceiver = relaysFromReceiver.get(key);
             // If there is Not any button for that relay
-            if(relays.get(key) == null) {
-                relays.put(key, relayFromReceiver);
-                continue;
-            }
             if(relayFromReceiver.toDelete()) {
                 relays.remove(key);
+                continue;
+            }
+            if(relays.get(key) == null) {
+                relays.put(key, relayFromReceiver);
                 continue;
             }
             relays.put(key, relayFromReceiver);
