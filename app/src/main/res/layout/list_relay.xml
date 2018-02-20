@@ -17,9 +17,15 @@
 
         <Switch
             android:id="@+id/relayStateSwitch"
-            android:layout_width="wrap_content"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:text="Status "/>
+
+        <Button
+            android:id="@+id/relayOptionsBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="..." />
     </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>

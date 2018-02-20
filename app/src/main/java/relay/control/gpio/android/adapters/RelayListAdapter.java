@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
     private SparseArray<IRelay> relays;
     private ServerConnection serverConnection;
 
+    // TODO: Must receive a ServerConnection object
     public RelayListAdapter(Context context, int layout) {
         this.context = context;
         this.layout = layout;
@@ -37,6 +39,7 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
         this.relays = new SparseArray<>();
     }
 
+    //TODO this method must be in the Activity
     public void startConnection(int port, String address) {
         serverConnection = new ServerConnection(context, address, port);
         serverConnection.addReceiverObserver(this);
@@ -48,16 +51,18 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
         }
     }
 
+    //TODO this method must be in the Activity
     public void closeConnection() {
         serverConnection.closeConnection();
     }
 
+    //TODO unnecessary method if the serverConnection is instanced from the activity
     public ServerConnection getServerConnection() {
         return serverConnection;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, final ViewGroup parent) {
 
         // View Holder Pattern
         ViewHolder viewHolder;
@@ -69,6 +74,7 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
             viewHolder = new ViewHolder();
             viewHolder.relayNameTextView = convertView.findViewById(R.id.relayNameTextView);
             viewHolder.relayStatusSwitch = convertView.findViewById(R.id.relayStateSwitch);
+            viewHolder.relayOptionsBtn = convertView.findViewById(R.id.relayOptionsBtn);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
@@ -79,11 +85,15 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
         viewHolder.relayStatusSwitch.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                String status = currentRelay.isOn()? Sender.STATUS_OFF : Sender.STATUS_ON;
-//                ActionSenderTask actionSenderTask = new ActionSenderTask(currentRelay.getId(), status);
                 boolean nextStatus = !currentRelay.isOn();
                 ActionSenderTask actionSenderTask = new ActionSenderTask(currentRelay.getId(), nextStatus);
                 actionSenderTask.execute();
+            }
+        });
+        viewHolder.relayOptionsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                parent.showContextMenuForChild(v);
             }
         });
         return convertView;
@@ -129,6 +139,7 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
     private static class ViewHolder {
         private TextView relayNameTextView;
         private Switch relayStatusSwitch;
+        private Button relayOptionsBtn;
     }
 
     private class ActionSenderTask extends AsyncTask<Void, Void, Boolean> {
@@ -144,8 +155,6 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
         @Override
         protected Boolean doInBackground(Void... voids) {
             try {
-//                String msg = "STATUS:" + relayId + ":" + status;
-//                serverConnection.sendMessage(msg);
                 if(status) {
                     serverConnection.turnOnRelay(relayId);
                     return true;
@@ -159,6 +168,9 @@ public class RelayListAdapter extends BaseAdapter implements Observer {
         }
     }
 
+    //TODO move this behaviour to the activity and delete this class
+    // So the Activity implements Observer and is a observer of the connection
+    // In the activity: connection.addConnectionObserver(this)
     private class connectionObserver implements Observer{
 
         @Override

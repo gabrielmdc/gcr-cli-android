@@ -6,8 +6,10 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ import relay.control.gpio.android.R;
 import relay.control.gpio.android.activities.RelayActivity;
 import relay.control.gpio.android.adapters.ServerListAdapter;
 import relay.control.gpio.android.models.IServerModel;
+import relay.control.gpio.android.models.realm.Server;
 import relay.control.gpio.android.repositories.IRepositories;
 import relay.control.gpio.android.repositories.IServerRepository;
 import relay.control.gpio.android.repositories.realm.RealmRepositories;
@@ -31,13 +34,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView serverListView;
     private List<IServerModel> servers;
     private ServerListAdapter serverListAdapter;
-    private FloatingActionButton createServerFloatingButton;
+//    private FloatingActionButton createServerFloatingButton;
     private IRepositories repositories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Toolbar serversToolbar = findViewById(R.id.servers_toolbar);
+        setSupportActionBar(serversToolbar);
 
         // Get servers from data base
         dataBaseSetUp();
@@ -51,13 +57,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         registerForContextMenu(serverListView);
         serverListView.setOnItemClickListener(this);
 
-        createServerFloatingButton = findViewById(R.id.createServerFloatingButton);
-        createServerFloatingButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCreateServerDialog();
-            }
-        });
+//        createServerFloatingButton = findViewById(R.id.createServerFloatingButton);
+//        createServerFloatingButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                IServerModel s = new Server(5, "Testing", "0.0.0.0");
+//                servers.add(s);
+//                serverListAdapter.notifyDataSetChanged();
+//            }
+//        });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.servers_menu, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -70,12 +84,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
+
         MenuInflater inflater = getMenuInflater();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
         IServerModel serverSelected = servers.get(info.position);
         menu.setHeaderTitle(serverSelected.getName());
         inflater.inflate(R.menu.server_context_menu, menu);
+        super.onCreateContextMenu(menu, v, menuInfo);
     }
 
     @Override
@@ -92,6 +107,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.new_server:
+                showCreateServerDialog();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void showEditServerDialog(final IServerModel server) {
