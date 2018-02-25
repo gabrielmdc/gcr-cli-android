@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="relay.control.gpio.android.app.MainActivity">
+    tools:context="gcr.cli.android.app.MainActivity">
 
     <include
         android:id="@+id/main_toolbar"
