@@ -114,7 +114,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(DialogInterface dialog, int which) {
                 String serverName = serverNameEditText.getText().toString().trim();
                 String serverAddress = serverAddressEditText.getText().toString().trim();
-                int socketPort = Integer.parseInt(socketPortEditText.getText().toString().trim());
+                String socketPortStr = socketPortEditText.getText().toString().trim();
+                int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
                 if(serverName.length() > 0 && serverAddress.length() > 0) {
                     editServer(server, serverName, serverAddress, socketPort);
                 }
@@ -140,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(DialogInterface dialog, int which) {
                 String serverName = serverNameEditText.getText().toString().trim();
                 String serverAddress = serverAddressEditText.getText().toString().trim();
-                int socketPort = Integer.parseInt(socketPortEditText.getText().toString().trim());
+                String socketPortStr = socketPortEditText.getText().toString().trim();
+                int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
                 if(serverName.length() > 0 && serverAddress.length() > 0) {
                     createNewServer(serverName, serverAddress, socketPort);
                 }
