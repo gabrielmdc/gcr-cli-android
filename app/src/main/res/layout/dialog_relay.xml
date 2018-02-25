@@ -31,7 +31,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:tag="Inverted"/>
+            android:tag="Inverted"
+            android:text="Inverted"/>
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="An inverted relay is a relay that when you turn it on, then the state of the relay is the opposite (off)" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
