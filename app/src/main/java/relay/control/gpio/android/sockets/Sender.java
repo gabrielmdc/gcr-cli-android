@@ -97,7 +97,7 @@ public class Sender {
 
     private void sendMessage(String... tokens) throws IOException {
         final String PRE_MSG = ":";
-        if(socket.isClosed() || tokens.length < 1) {
+       if(socket.isClosed() || tokens.length < 1) {
             return;
         }
         String msg = PRE_MSG;

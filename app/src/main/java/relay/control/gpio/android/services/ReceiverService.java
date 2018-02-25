@@ -69,7 +69,7 @@ public class ReceiverService extends IntentService implements Observer {
 
     @Override
     public boolean stopService(Intent intent) {
-        if(receiverSocket.isConnected()) {
+        if(!receiverSocket.isClosed()) {
             try {
                 receiverSocket.close();
             } catch (IOException e) {

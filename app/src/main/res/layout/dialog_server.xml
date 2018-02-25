@@ -26,5 +26,13 @@
             android:ems="10"
             android:hint="Address"
             android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/socketPortEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Socket port"
+            android:inputType="textPersonName" />
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

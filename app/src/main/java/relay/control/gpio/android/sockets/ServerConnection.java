@@ -43,12 +43,12 @@ public class ServerConnection {
     }
 
     public void closeConnection() {
-        try {
-            if(senderSocket != null && !senderSocket.isClosed()){
+        if(senderSocket != null && !senderSocket.isClosed()) {
+            try {
                 senderSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         }
         Intent requestIntent = new Intent(context, ReceiverService.class);
         context.stopService(requestIntent);

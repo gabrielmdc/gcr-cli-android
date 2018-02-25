@@ -18,10 +18,10 @@ public class RealmServerRepository implements IServerRepository {
         this.realm = realm;
     }
 
-    public IServerModel create(String name, String address) {
+    public IServerModel create(String name, String address, int socketPort) {
         realm.beginTransaction();
         int id = getNextId();
-        Server server = new Server(id, name, address);
+        Server server = new Server(id, name, address, socketPort);
         IServerModel realmObject = realm.copyToRealm(server);
         realm.commitTransaction();
         return realmObject;
@@ -43,10 +43,11 @@ public class RealmServerRepository implements IServerRepository {
     }
 
     @Override
-    public IServerModel edit(IServerModel server, String name, String address) {
+    public IServerModel edit(IServerModel server, String name, String address, int socketPort) {
         realm.beginTransaction();
         server.setName(name);
         server.setAddress(address);
+        server.setSocketPort(socketPort);
         IServerModel realmObject = realm.copyToRealmOrUpdate((Server)server);
         realm.commitTransaction();
         return realmObject;
@@ -58,8 +59,12 @@ public class RealmServerRepository implements IServerRepository {
     }
 
     @Override
-    public IServerModel findByAddress(String address) {
-        return realm.where(Server.class).equalTo("address", address).findFirst();
+    public IServerModel findByAddressAndSocketPort(String address, int socketPort) {
+        return realm.where(Server.class)
+                .equalTo("address", address)
+                .and()
+                .equalTo("socketPort", socketPort)
+                .findFirst();
     }
 
     private int getNextId() {

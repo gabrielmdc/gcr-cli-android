@@ -6,10 +6,8 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,16 +32,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView serverListView;
     private List<IServerModel> servers;
     private ServerListAdapter serverListAdapter;
-//    private FloatingActionButton createServerFloatingButton;
+    private FloatingActionButton createServerFloatingButton;
     private IRepositories repositories;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        Toolbar serversToolbar = findViewById(R.id.servers_toolbar);
-        setSupportActionBar(serversToolbar);
 
         // Get servers from data base
         dataBaseSetUp();
@@ -57,21 +52,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         registerForContextMenu(serverListView);
         serverListView.setOnItemClickListener(this);
 
-//        createServerFloatingButton = findViewById(R.id.createServerFloatingButton);
-//        createServerFloatingButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                IServerModel s = new Server(5, "Testing", "0.0.0.0");
-//                servers.add(s);
-//                serverListAdapter.notifyDataSetChanged();
-//            }
-//        });
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.servers_menu, menu);
-        return super.onCreateOptionsMenu(menu);
+        createServerFloatingButton = findViewById(R.id.createServerFloatingButton);
+        createServerFloatingButton.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showCreateServerDialog();
+            }
+        });
     }
 
     @Override
@@ -109,16 +96,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onContextItemSelected(item);
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.new_server:
-                showCreateServerDialog();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     private void showEditServerDialog(final IServerModel server) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit " + server + " server");
@@ -127,17 +104,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
+        final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
 
         serverNameEditText.setText(server.getName());
         serverAddressEditText.setText(server.getAddress());
+        socketPortEditText.setText(server.getSocketPort()+"");
 
         builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String serverName = serverNameEditText.getText().toString().trim();
                 String serverAddress = serverAddressEditText.getText().toString().trim();
+                int socketPort = Integer.parseInt(socketPortEditText.getText().toString().trim());
                 if(serverName.length() > 0 && serverAddress.length() > 0) {
-                    editServer(server, serverName, serverAddress);
+                    editServer(server, serverName, serverAddress, socketPort);
                 }
             }
         });
@@ -154,14 +134,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
+        final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
 
         builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String serverName = serverNameEditText.getText().toString().trim();
                 String serverAddress = serverAddressEditText.getText().toString().trim();
+                int socketPort = Integer.parseInt(socketPortEditText.getText().toString().trim());
                 if(serverName.length() > 0 && serverAddress.length() > 0) {
-                    createNewServer(serverName, serverAddress);
+                    createNewServer(serverName, serverAddress, socketPort);
                 }
             }
         });
@@ -170,9 +152,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         dialog.show();
     }
 
-    private void editServer(IServerModel server, String name, String address) {
+    private void editServer(IServerModel server, String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
-        server = serverRepo.edit(server, name, address);
+        server = serverRepo.edit(server, name, address, socketPort);
         Toast.makeText(this, "Server '" + server + "' modified", Toast.LENGTH_SHORT).show();
     }
 
@@ -185,9 +167,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         Toast.makeText(this, "Server '" + serverDescription + "' deleted", Toast.LENGTH_SHORT).show();
     }
 
-    private void createNewServer(String name, String address) {
+    private void createNewServer(String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
-        IServerModel server = serverRepo.create(name, address);
+        IServerModel server = serverRepo.create(name, address, socketPort);
         servers.add(server);
         serverListAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Server '" + server + "' added", Toast.LENGTH_SHORT).show();

@@ -1,11 +1,13 @@
 package relay.control.gpio.android.activities;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.SparseArray;
 import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,6 +21,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import relay.control.gpio.android.R;
 import relay.control.gpio.android.adapters.RelayListAdapter;
@@ -27,34 +31,34 @@ import relay.control.gpio.android.models.IServerModel;
 import relay.control.gpio.android.repositories.IRepositories;
 import relay.control.gpio.android.repositories.IServerRepository;
 import relay.control.gpio.android.repositories.realm.RealmRepositories;
+import relay.control.gpio.android.services.ReceiverService;
 import relay.control.gpio.android.sockets.ServerConnection;
 
-public class RelayActivity extends AppCompatActivity {
+public class RelayActivity extends AppCompatActivity implements Observer {
 
     private ListView relayListView;
     private IServerModel server;
     private IRepositories repositories;
     private RelayListAdapter relayListAdapter;
-
-    private final int PORT = 10001;
+    private ServerConnection serverConnection;
+    private SparseArray<IRelay> relays;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_relay);
 
+        relays = new SparseArray<>();
+
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
 
         repositories = new RealmRepositories();
         setServerFromIntent();
-
-        relayListAdapter = new RelayListAdapter(this, R.layout.list_relay);
-        relayListView = findViewById(R.id.relayListView);
-
-
-        relayListView.setAdapter(relayListAdapter);
-        registerForContextMenu(relayListView);
+        serverConnection = new ServerConnection(this, server.getAddress(), server.getSocketPort());
+        serverConnection.addReceiverObserver(new ReceiverObserver());
+        serverConnection.addConnectionObserver(this);
     }
 
     @Override
@@ -69,17 +73,14 @@ public class RelayActivity extends AppCompatActivity {
 
     @Override
     public boolean onContextItemSelected(MenuItem item) {
-        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) item.getMenuInfo();
+        AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo)item.getMenuInfo();
+        IRelay relaySelected = relayListAdapter.getItem(info.position);
         switch(item.getItemId()){
             case R.id.edit_relay:
-                IRelay relaySelected = relayListAdapter.getItem(info.position);
-//                showEditRelayDialog(servers.get(info.position));
                 showEditRelayDialog(relaySelected);
-                //relayListAdapter.notifyDataSetChanged();
                 return true;
             case R.id.delete_relay:
-                deleteRelay(info.position);
-                //relayListAdapter.notifyDataSetChanged();
+                deleteRelay(relaySelected);
                 return true;
         }
         return super.onContextItemSelected(item);
@@ -104,14 +105,49 @@ public class RelayActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        if(server != null){
-            relayListAdapter.startConnection(PORT, server.getAddress());
+        try {
+            progressDialog = ProgressDialog.show(this,
+                    "Connecting",
+                    "Stabilising connection...");
+            serverConnection.connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        String msg = arg != null? (String)arg : "";
+//            if (msg == ReceiverService.ACTION_CONNECTION_WAITING) {
+//                Toast.makeText(context, "Receiver waiting", Toast.LENGTH_SHORT).show();
+//            }
+//            if (msg == ServerConnection.SENDER_CONNECTED) {
+//                Toast.makeText(context, "Sender connected", Toast.LENGTH_SHORT).show();
+//            }
+        if (msg == ReceiverService.ACTION_CONNECTED) {
+            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+
+            relayListAdapter = new RelayListAdapter(this, R.layout.list_relay, relays, serverConnection);
+            relayListView = findViewById(R.id.relayListView);
+            relayListView.setAdapter(relayListAdapter);
+            registerForContextMenu(relayListView);
+            if(progressDialog != null) {
+                progressDialog.dismiss();
+            }
+        }
+        if (msg == ServerConnection.SENDER_REFUSED) {
+            if(progressDialog != null) {
+                progressDialog.dismiss();
+            }
+            Toast.makeText(this, "Connection refused", Toast.LENGTH_SHORT).show();
+            closeConnection();
+            this.finish();
         }
     }
 
     @Override
     public void onDestroy() {
-        relayListAdapter.closeConnection();
+        closeConnection();
         super.onDestroy();
     }
 
@@ -178,39 +214,66 @@ public class RelayActivity extends AppCompatActivity {
 
     private void createRelay(String name, int gpio, boolean inverted) {
         if(name.length() > 0 && gpio > 0) {
-            CreateRelayTask createRelayTask = new CreateRelayTask(name, gpio, inverted);
+            CreateRelayTask createRelayTask = new CreateRelayTask(name, gpio, inverted, serverConnection);
             createRelayTask.execute();
         }
     }
 
     private void editRelay(IRelay relay, String name, boolean inverted, int gpio) {
         if(name.length() > 0 && gpio > 0) {
-            EditRelayTask editRelayTask = new EditRelayTask(relay.getId(), name, gpio, inverted);
+            EditRelayTask editRelayTask = new EditRelayTask(relay.getId(), name, gpio, inverted, serverConnection);
             editRelayTask.execute();
         }
     }
 
-    private void deleteRelay(int position) {
-        IRelay relay = relayListAdapter.getItem(position);
-        DeleteRelayTask deleteRelayTask = new DeleteRelayTask(relay.getId());
+    private void deleteRelay(IRelay relay) {
+        DeleteRelayTask deleteRelayTask = new DeleteRelayTask(relay.getId(), serverConnection);
         deleteRelayTask.execute();
     }
 
-    private class CreateRelayTask extends AsyncTask<Void, Void, Boolean> {
+    private void closeConnection() {
+        serverConnection.closeConnection();
+    }
+
+    private class ReceiverObserver implements Observer{
+
+        @Override
+        public void update(Observable o, Object arg) {
+            SparseArray<IRelay> relaysFromReceiver = (SparseArray<IRelay>)arg;
+            for(int i = 0; i < relaysFromReceiver.size(); i++) {
+                int key = relaysFromReceiver.keyAt(i);
+                IRelay relayFromReceiver = relaysFromReceiver.get(key);
+                // If there is Not any button for that relay
+                if(relayFromReceiver.toDelete()) {
+                    relays.remove(key);
+                    continue;
+                }
+                if(relays.get(key) == null) {
+                    relays.put(key, relayFromReceiver);
+                    continue;
+                }
+                relays.put(key, relayFromReceiver);
+            }
+            relayListAdapter.notifyDataSetChanged();
+        }
+    }
+
+    private static class CreateRelayTask extends AsyncTask<Void, Void, Boolean> {
 
         private String name;
         private int gpio;
         private boolean inverted;
+        private ServerConnection serverConnection;
 
-        CreateRelayTask(String name, int gpio, boolean inverted) {
+        CreateRelayTask(String name, int gpio, boolean inverted, ServerConnection serverConnection) {
             this.name = name;
             this.gpio = gpio;
             this.inverted = inverted;
+            this.serverConnection = serverConnection;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            ServerConnection serverConnection = relayListAdapter.getServerConnection();
             try {
                 serverConnection.createRelay(name, gpio, inverted);
                 return true;
@@ -221,17 +284,18 @@ public class RelayActivity extends AppCompatActivity {
         }
     }
 
-    private class DeleteRelayTask extends AsyncTask<Void, Void, Boolean> {
+    private static class DeleteRelayTask extends AsyncTask<Void, Void, Boolean> {
 
         private int id;
+        private ServerConnection serverConnection;
 
-        DeleteRelayTask(int id) {
+        DeleteRelayTask(int id, ServerConnection serverConnection) {
             this.id = id;
+            this.serverConnection = serverConnection;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            ServerConnection serverConnection = relayListAdapter.getServerConnection();
             try {
                 serverConnection.deleteRelay(id);
                 return true;
@@ -242,23 +306,25 @@ public class RelayActivity extends AppCompatActivity {
         }
     }
 
-    private class EditRelayTask extends AsyncTask<Void, Void, Boolean> {
+    private static class EditRelayTask extends AsyncTask<Void, Void, Boolean> {
 
         private String name;
         private int gpio;
         private boolean inverted;
         private int id;
+        private ServerConnection serverConnection;
 
-        EditRelayTask(int id, String name, int gpio, boolean inverted) {
+        EditRelayTask(int id, String name, int gpio, boolean inverted,
+                      ServerConnection serverConnection) {
             this.name = name;
             this.gpio = gpio;
             this.inverted = inverted;
             this.id = id;
+            this.serverConnection = serverConnection;
         }
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            ServerConnection serverConnection = relayListAdapter.getServerConnection();
             try {
                 serverConnection.editRelay(id, name, gpio, inverted);
                 return true;
@@ -268,5 +334,4 @@ public class RelayActivity extends AppCompatActivity {
             return false;
         }
     }
-
 }

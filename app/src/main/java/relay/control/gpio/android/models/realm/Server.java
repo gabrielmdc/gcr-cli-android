@@ -1,6 +1,7 @@
 package relay.control.gpio.android.models.realm;
 
 import io.realm.RealmObject;
+import io.realm.annotations.Index;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 import relay.control.gpio.android.models.IServerModel;
@@ -13,13 +14,15 @@ public class Server extends RealmObject implements IServerModel {
     private String name;
     @Required
     private String address;
+    private int socketPort;
 
     public Server(){}
 
-    public Server(int id, String name, String address) {
+    public Server(int id, String name, String address, int socketPort) {
         this.id = id;
         this.name = name;
         this.address = address;
+        this.socketPort = socketPort;
     }
 
     @Override
@@ -43,6 +46,11 @@ public class Server extends RealmObject implements IServerModel {
     }
 
     @Override
+    public int getSocketPort() {
+        return socketPort;
+    }
+
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -50,5 +58,10 @@ public class Server extends RealmObject implements IServerModel {
     @Override
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @Override
+    public void setSocketPort(int socketPort) {
+        this.socketPort = socketPort;
     }
 }
