@@ -107,6 +107,9 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onStart() {
         super.onStart();
+        if(serverConnection.isConnected()) {
+            return;
+        }
         try {
             progressDialog = ProgressDialog.show(this, "Connecting",
                     "Stabilising connection...");
@@ -124,9 +127,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         ConnectionStatus status = (ConnectionStatus) arg;
 
         switch(status) {
-            case RECEIVER_CONNECTED:
+            case CONNECTED:
                 Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-
                 relayListAdapter = new RelayListAdapter(this, R.layout.list_relay, relays,
                         serverConnection);
                 relayListView = findViewById(R.id.relayListView);
@@ -136,20 +138,21 @@ public class RelayActivity extends AppCompatActivity implements Observer {
                     progressDialog.dismiss();
                 }
                 break;
-            case SENDER_REFUSED:
-            case RECEIVER_REFUSED:
-            case RECEIVER_TIMEOUT:
+            case REFUSED:
                 if(progressDialog != null) {
                     progressDialog.dismiss();
                 }
                 Toast.makeText(this, "Connection refused", Toast.LENGTH_SHORT).show();
+                this.finish();
+                break;
+            case DISCONNECTED:
+                Toast.makeText(this, "Connection closed", Toast.LENGTH_SHORT).show();
                 this.finish();
         }
     }
 
     @Override
     public void onDestroy() {
-        Toast.makeText(this, "Saliendo del Activity...", Toast.LENGTH_SHORT).show();
         serverConnection.closeConnection();
         super.onDestroy();
     }

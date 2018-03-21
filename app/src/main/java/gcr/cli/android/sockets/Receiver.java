@@ -37,17 +37,13 @@ public class Receiver extends Observable implements Runnable {
         try {
             in = new DataInputStream(socket.getInputStream());
             while (socket != null && !socket.isClosed()){
-                System.out.println("Receiver: a la escucha ..." + this);
                 readAndSendResponse(in);
-                System.out.println("Receiver: Leído from ..." + this);
             }
         } catch (IOException e) {
-            System.out.println(e.getMessage());
             e.printStackTrace();
+        } finally {
             closeSocket();
         }
-
-        System.out.println("Receiver finished... " + this);
     }
 
     private Socket getNewSocket() {
@@ -61,10 +57,8 @@ public class Receiver extends Observable implements Runnable {
             sendConnectionStatus(ConnectionStatus.RECEIVER_START);
             serverSocket = new ServerSocket(port);
             sendConnectionStatus(ConnectionStatus.RECEIVER_WAITING_FOR_SENDER);
-            System.out.println("------> 2 " + this);
             serverSocket.setSoTimeout(2000); // milliseconds
             newSocket = serverSocket.accept();
-            System.out.println("Receiver connected..." + newSocket);
             sendConnectionStatus(ConnectionStatus.RECEIVER_CONNECTED);
         } catch (SocketTimeoutException e) {
             sendConnectionStatus(ConnectionStatus.RECEIVER_TIMEOUT);
@@ -90,10 +84,8 @@ public class Receiver extends Observable implements Runnable {
      */
     private void readAndSendResponse(DataInputStream in) throws IOException {
         byte[] buff = new byte[200];
-        System.out.println("Esperando respuesta...");
         if(in.read(buff) > 0){
             String msgBack = new String(buff,"UTF-8").trim();
-            System.out.println("Recibido Mensaje: " + msgBack);
             sendRelaysReceived(msgBack);
             return;
         }
@@ -108,8 +100,8 @@ public class Receiver extends Observable implements Runnable {
                 e.printStackTrace();
                 socket = null;
             }
-            sendConnectionStatus(ConnectionStatus.RECEIVER_DISCONNECTED);
         }
+        sendConnectionStatus(ConnectionStatus.RECEIVER_DISCONNECTED);
     }
 
     private void sendRelaysReceived(String relaysJson){

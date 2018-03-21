@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.ResultReceiver;
 
-import java.net.ServerSocket;
 import gcr.cli.android.sockets.Receiver;
 
 public class ReceiverService extends IntentService {
@@ -35,7 +34,6 @@ public class ReceiverService extends IntentService {
         if(intent == null || intent.getExtras() == null) {
             return;
         }
-        ServerSocket serverSocket = null;
         Bundle bundle = intent.getExtras();
         final int port = bundle.getInt(EXTRA_PORT, -1);
         ResultReceiver resultReceiver = bundle.getParcelable(EXTRA_RECEIVER);
@@ -43,6 +41,5 @@ public class ReceiverService extends IntentService {
         Receiver receiver = new Receiver(port, resultReceiver);
         Thread receiverThread = new Thread(receiver);
         receiverThread.start();
-        System.out.println("----------> Service finished");
     }
 }

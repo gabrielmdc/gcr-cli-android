@@ -1,6 +1,10 @@
 package gcr.cli.android.sockets;
 
 public enum ConnectionStatus {
+    // GENERAL
+    CONNECTED,
+    DISCONNECTED,
+    REFUSED,
     // RECEIVER STATUS
     RECEIVER_START,
     RECEIVER_WAITING_FOR_SENDER,
