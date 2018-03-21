@@ -1,12 +1,16 @@
 package gcr.cli.android.sockets;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.ResultReceiver;
 import android.util.SparseArray;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -14,24 +18,24 @@ import java.util.Observable;
 import java.util.Observer;
 
 import gcr.cli.android.models.IRelay;
+import gcr.cli.android.models.Relay;
 import gcr.cli.android.services.ReceiverService;
 
 public class ServerConnection {
-
-    public static final String SENDER_CONNECTED = "sender_connected";
-    public static final String SENDER_REFUSED = "sender_refused";
 
     private Context context;
     private Socket senderSocket;
     private ServerObservable connectionObservable;
     private ServerObservable receiverObservable;
+    private ServiceReceiver serviceReceiver;
 
     private String address;
     private int port;
 
     public ServerConnection(Context context, String address, int port) {
         this.context = context;
-        mountBroadCastReceiver(this.context);
+        Handler contextHandler = new Handler(this.context.getMainLooper());
+        serviceReceiver = new ServiceReceiver(contextHandler);
         connectionObservable = new ServerObservable();
         receiverObservable = new ServerObservable();
         this.address = address;
@@ -39,19 +43,15 @@ public class ServerConnection {
     }
 
     public void connect() throws IOException {
-        ReceiverService.start(port, context);
+        // Once the receiver is connected, the sender will try to connect by the ServiceReceiver
+        ReceiverService.start(port, context, serviceReceiver);
     }
 
     public void closeConnection() {
         if(senderSocket != null && !senderSocket.isClosed()) {
-            try {
-                senderSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            SenderDisconnectTask t = new SenderDisconnectTask();
+            t.execute();
         }
-        Intent requestIntent = new Intent(context, ReceiverService.class);
-        context.stopService(requestIntent);
     }
 
     public void createRelay(String name, int port, boolean inverted) throws IOException {
@@ -99,31 +99,40 @@ public class ServerConnection {
         return sender;
     }
 
-    private void mountBroadCastReceiver(Context context) {
-        LocalBroadcastManager broadcastManager = LocalBroadcastManager.getInstance(context);
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ReceiverService.ACTION_RECEIVED);
-        filter.addAction(ReceiverService.ACTION_CONNECTED);
-        filter.addAction(ReceiverService.ACTION_CONNECTION_WAITING);
-        ReceiverBroadCastReceiver broadCastReceiver = new ReceiverBroadCastReceiver();
-        broadcastManager.registerReceiver(broadCastReceiver, filter);
-    }
+    private class ServiceReceiver extends ResultReceiver {
 
-    private class ReceiverBroadCastReceiver extends BroadcastReceiver {
+        /**
+         * Create a new ResultReceive to receive results.  Your
+         * {@link #onReceiveResult} method will be called from the thread running
+         * <var>handler</var> if given, or from an arbitrary thread if null.
+         *
+         * @param handler
+         */
+        ServiceReceiver(Handler handler) {
+            super(handler);
+        }
 
         @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            if( action == ReceiverService.ACTION_CONNECTION_WAITING) {
-                connectionObservable.setChangedAndNotify(ReceiverService.ACTION_CONNECTION_WAITING);
-                SenderConnectionTask t = new SenderConnectionTask(address, port);
-                t.execute();
-            } else if( action == ReceiverService.ACTION_CONNECTED) {
-                System.out.println("Receiver connected...");
-                connectionObservable.setChangedAndNotify(ReceiverService.ACTION_CONNECTED);
-            } else if(action == ReceiverService.ACTION_RECEIVED) {
-                String relaysJson = intent.getStringExtra(ReceiverService.EXTRA);
-                SparseArray<IRelay> relays = Receiver.getRelaysFromJsonMsg(relaysJson);
+        protected void onReceiveResult(int resultCode, Bundle resultData) {
+            super.onReceiveResult(resultCode, resultData);
+
+            if (resultData.containsKey(Receiver.KEY_CONNECTION)){
+                ConnectionStatus status = ConnectionStatus.values()[resultCode];
+                connectionObservable.setChangedAndNotify(status);
+                switch(status) {
+                    case RECEIVER_WAITING_FOR_SENDER:
+                        SenderConnectionTask t = new SenderConnectionTask(address, port);
+                        t.execute();
+                        break;
+                    case RECEIVER_CONNECTED:
+                        System.out.println("Receiver connected (action received)...");
+                }
+                return;
+            }
+
+            if (resultData.containsKey(ReceiverService.KEY_RECEIVED)) {
+                String relaysJson = resultData.getString(Receiver.EXTRA_RELAYS_JSON);
+                SparseArray<IRelay> relays = getRelaysFromJsonMsg(relaysJson);
                 receiverObservable.setChangedAndNotify(relays);
             }
         }
@@ -144,6 +153,7 @@ public class ServerConnection {
             if(senderSocket == null || senderSocket.isClosed()) {
                 Sender sender = new Sender();
                 try {
+                    System.out.println("------> 1 " + context);
                     senderSocket = sender.connect(address, port);
                     return true;
                 } catch (IOException e) {
@@ -157,13 +167,30 @@ public class ServerConnection {
 
         @Override
         protected void onPostExecute(Boolean result) {
-            if(result) {
-                connectionObservable.setChangedAndNotify(SENDER_CONNECTED);
-                return;
+            ConnectionStatus status = result ? ConnectionStatus.SENDER_CONNECTED :
+                    ConnectionStatus.SENDER_REFUSED;
+            if(status == ConnectionStatus.SENDER_REFUSED) {
+                closeConnection();
             }
-            connectionObservable.setChangedAndNotify(SENDER_REFUSED);
+            connectionObservable.setChangedAndNotify(status);
         }
 
+    }
+
+    private class SenderDisconnectTask extends AsyncTask<Void, Void, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            try {
+                Sender sender = getSenderReady();
+                sender.sendEndConnection();
+                senderSocket.close();
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return false;
+        }
     }
 
     private class ServerObservable extends Observable {
@@ -171,5 +198,27 @@ public class ServerConnection {
             setChanged();
             notifyObservers(arg);
         }
+    }
+
+    static private SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
+        SparseArray<IRelay> relays = new SparseArray<>();
+        JSONArray arr;
+        try {
+            arr = new JSONArray(msg);
+            for (int i = 0; i < arr.length(); i++) {
+                JSONObject obj = arr.getJSONObject(i);
+                int id = obj.getInt("id");
+                String name = obj.getString("name");
+                int gpio = obj.getInt("port");
+                boolean status = obj.getString("status").equals("1");
+                boolean toDelete = Boolean.parseBoolean(obj.getString("deleted"));
+                boolean inverted = Boolean.parseBoolean(obj.getString("inverted"));
+                Relay relay = new Relay(id, name, gpio, status, inverted, toDelete);
+                relays.put(id, relay);
+            }
+        } catch (JSONException e) {
+            e.getStackTrace();
+        }
+        return relays;
     }
 }

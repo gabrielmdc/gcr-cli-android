@@ -1,63 +1,86 @@
 package gcr.cli.android.sockets;
 
-import android.util.SparseArray;
+import android.os.Bundle;
+import android.os.ResultReceiver;
 
+import java.net.ServerSocket;
+import java.net.SocketTimeoutException;
 import java.util.Observable;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.net.Socket;
 
-import gcr.cli.android.models.IRelay;
-import gcr.cli.android.models.Relay;
+import gcr.cli.android.services.ReceiverService;
 
 public class Receiver extends Observable implements Runnable {
 
-    private Socket socket;
+    public static final String KEY_CONNECTION = "KEY_CONNECTION";
+    public static final String EXTRA_RELAYS_JSON = "EXTRA_RELAYS_JSON";
 
-    public Receiver(Socket socket){
-        this.socket = socket;
+    private Socket socket;
+    private int port;
+    private ResultReceiver resultReceiver;
+
+    public Receiver(int port, ResultReceiver resultReceiver){
+        this.port = port;
+        this.resultReceiver = resultReceiver;
+        this.socket = null;
     }
 
     @Override
     public void run() {
         DataInputStream in;
+        socket = getNewSocket();
+        if(socket == null) {
+            return;
+        }
         try {
             in = new DataInputStream(socket.getInputStream());
             while (socket != null && !socket.isClosed()){
-                readResponse(in);
+                System.out.println("Receiver: a la escucha ..." + this);
+                readAndSendResponse(in);
+                System.out.println("Receiver: Leído from ..." + this);
             }
         } catch (IOException e) {
             System.out.println(e.getMessage());
             e.printStackTrace();
+            closeSocket();
         }
-        System.out.println("Receiver termina...");
+
+        System.out.println("Receiver finished... " + this);
     }
 
-    static public SparseArray<IRelay> getRelaysFromJsonMsg(String msg) {
-        SparseArray<IRelay> relays = new SparseArray<>();
-        JSONArray arr;
-        try {
-            arr = new JSONArray(msg);
-            for (int i = 0; i < arr.length(); i++) {
-                JSONObject obj = arr.getJSONObject(i);
-                int id = obj.getInt("id");
-                String name = obj.getString("name");
-                int gpio = obj.getInt("port");
-                boolean status = obj.getString("status").equals("1");
-                boolean toDelete = Boolean.parseBoolean(obj.getString("deleted"));
-                boolean inverted = Boolean.parseBoolean(obj.getString("inverted"));
-                Relay relay = new Relay(id, name, gpio, status, inverted, toDelete);
-                relays.put(id, relay);
-            }
-        } catch (JSONException e) {
-            e.getStackTrace();
+    private Socket getNewSocket() {
+        Socket newSocket = null;
+        ServerSocket serverSocket = null;
+        if(port < 0 || resultReceiver == null) {
+            sendConnectionStatus(ConnectionStatus.RECEIVER_REFUSED);
+            return null;
         }
-        return relays;
+        try {
+            sendConnectionStatus(ConnectionStatus.RECEIVER_START);
+            serverSocket = new ServerSocket(port);
+            sendConnectionStatus(ConnectionStatus.RECEIVER_WAITING_FOR_SENDER);
+            System.out.println("------> 2 " + this);
+            serverSocket.setSoTimeout(2000); // milliseconds
+            newSocket = serverSocket.accept();
+            System.out.println("Receiver connected..." + newSocket);
+            sendConnectionStatus(ConnectionStatus.RECEIVER_CONNECTED);
+        } catch (SocketTimeoutException e) {
+            sendConnectionStatus(ConnectionStatus.RECEIVER_TIMEOUT);
+        } catch (IOException e) {
+            e.printStackTrace();
+            sendConnectionStatus(ConnectionStatus.RECEIVER_REFUSED);
+        } finally {
+            if(serverSocket != null) {
+                try {
+                    serverSocket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return newSocket;
     }
 
     /**
@@ -65,18 +88,41 @@ public class Receiver extends Observable implements Runnable {
      * @param in
      * @throws IOException
      */
-    private void readResponse(DataInputStream in) throws IOException {
+    private void readAndSendResponse(DataInputStream in) throws IOException {
         byte[] buff = new byte[200];
         System.out.println("Esperando respuesta...");
         if(in.read(buff) > 0){
             String msgBack = new String(buff,"UTF-8").trim();
             System.out.println("Recibido Mensaje: " + msgBack);
-
-            //SparseArray<IRelay> relays = getRelaysFromJsonMsg(msgBack);
-            setChanged();
-            notifyObservers(msgBack);
+            sendRelaysReceived(msgBack);
             return;
         }
-        socket.close();
+        closeSocket();
     }
+
+    private void closeSocket() {
+        if(socket != null && !socket.isClosed()) {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                socket = null;
+            }
+            sendConnectionStatus(ConnectionStatus.RECEIVER_DISCONNECTED);
+        }
+    }
+
+    private void sendRelaysReceived(String relaysJson){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(ReceiverService.KEY_RECEIVED, true);
+        bundle.putString(EXTRA_RELAYS_JSON, relaysJson);
+        resultReceiver.send(0, bundle);
+    }
+
+    private void sendConnectionStatus(ConnectionStatus resultCode){
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(Receiver.KEY_CONNECTION, true);
+        resultReceiver.send(resultCode.ordinal(), bundle);
+    }
+
 }
