@@ -1,6 +1,6 @@
 package gcr.cli.android.models;
 
-public interface IServerModel {
+public interface IServerModel extends IModel {
     int getId();
     String getName();
     String getAddress();
