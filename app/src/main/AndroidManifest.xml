@@ -19,7 +19,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activities.RelayActivity" />
+        <activity
+            android:name=".activities.RelayActivity"
+            android:configChanges="orientation|screenSize" />
 
         <service android:name=".services.ReceiverService" />
 

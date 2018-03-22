@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,21 +34,23 @@ public class Sender {
     private Socket socket;
     private DataOutputStream out;
 
-    public Socket connect(String address, int port) throws IOException {
-        Socket socket = new Socket(address, port);
-        return connect(socket);
+    public void openConnection(String address, int port) throws IOException {
+        socket = new Socket(address, port);
+        out = new DataOutputStream(socket.getOutputStream());
     }
 
-    public Socket connect(Socket socket) throws IOException {
-        if(socket != null && socket.isConnected()){
-            this.socket = socket;
-            out = new DataOutputStream(socket.getOutputStream());
+    public void closeConnection() throws IOException {
+        if(isConnected()) {
+            try {
+                sendMessage(ACTION_END);
+            } finally {
+                socket.close();
+            }
         }
-        return socket;
     }
 
-    public void sendEndConnection() throws IOException {
-        sendMessage(ACTION_END);
+    public boolean isConnected() {
+        return socket != null && socket.isConnected() && !socket.isClosed();
     }
 
     public void sendStatusOn(int... relayIds) throws IOException {
@@ -97,13 +101,11 @@ public class Sender {
 
     private void sendMessage(String... tokens) throws IOException {
         final String PRE_MSG = ":";
-       if(socket.isClosed() || tokens.length < 1) {
+        if(socket.isClosed() || tokens.length < 1) {
             return;
         }
         String msg = PRE_MSG;
         msg += TextUtils.join(":", tokens);
-
         out.writeUTF(msg);
-        System.out.println("MSG: " + msg);
     }
 }

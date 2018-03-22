@@ -2,6 +2,7 @@ package gcr.cli.android.activities;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import gcr.cli.android.models.IRelay;
 import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
 import gcr.cli.android.services.ReceiverService;
+import gcr.cli.android.sockets.ConnectionStatus;
 import gcr.cli.android.sockets.ServerConnection;
 
 public class RelayActivity extends AppCompatActivity implements Observer {
@@ -105,9 +107,11 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     @Override
     protected void onStart() {
         super.onStart();
+        if(serverConnection.isConnected()) {
+            return;
+        }
         try {
-            progressDialog = ProgressDialog.show(this,
-                    "Connecting",
+            progressDialog = ProgressDialog.show(this, "Connecting",
                     "Stabilising connection...");
             serverConnection.connect();
         } catch (IOException e) {
@@ -117,37 +121,39 @@ public class RelayActivity extends AppCompatActivity implements Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        String msg = arg != null? (String)arg : "";
-//            if (msg == ReceiverService.ACTION_CONNECTION_WAITING) {
-//                Toast.makeText(context, "Receiver waiting", Toast.LENGTH_SHORT).show();
-//            }
-//            if (msg == ServerConnection.SENDER_CONNECTED) {
-//                Toast.makeText(context, "Sender connected", Toast.LENGTH_SHORT).show();
-//            }
-        if (msg == ReceiverService.ACTION_CONNECTED) {
-            Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
-
-            relayListAdapter = new RelayListAdapter(this, R.layout.list_relay, relays, serverConnection);
-            relayListView = findViewById(R.id.relayListView);
-            relayListView.setAdapter(relayListAdapter);
-            registerForContextMenu(relayListView);
-            if(progressDialog != null) {
-                progressDialog.dismiss();
-            }
+        if(arg == null) {
+            return;
         }
-        if (msg == ServerConnection.SENDER_REFUSED) {
-            if(progressDialog != null) {
-                progressDialog.dismiss();
-            }
-            Toast.makeText(this, "Connection refused", Toast.LENGTH_SHORT).show();
-            closeConnection();
-            this.finish();
+        ConnectionStatus status = (ConnectionStatus) arg;
+
+        switch(status) {
+            case CONNECTED:
+                Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+                relayListAdapter = new RelayListAdapter(this, R.layout.list_relay, relays,
+                        serverConnection);
+                relayListView = findViewById(R.id.relayListView);
+                relayListView.setAdapter(relayListAdapter);
+                registerForContextMenu(relayListView);
+                if(progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                break;
+            case REFUSED:
+                if(progressDialog != null) {
+                    progressDialog.dismiss();
+                }
+                Toast.makeText(this, "Connection refused", Toast.LENGTH_SHORT).show();
+                this.finish();
+                break;
+            case DISCONNECTED:
+                Toast.makeText(this, "Connection closed", Toast.LENGTH_SHORT).show();
+                this.finish();
         }
     }
 
     @Override
     public void onDestroy() {
-        closeConnection();
+        serverConnection.closeConnection();
         super.onDestroy();
     }
 
@@ -229,10 +235,6 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     private void deleteRelay(IRelay relay) {
         DeleteRelayTask deleteRelayTask = new DeleteRelayTask(relay.getId(), serverConnection);
         deleteRelayTask.execute();
-    }
-
-    private void closeConnection() {
-        serverConnection.closeConnection();
     }
 
     private class ReceiverObserver implements Observer{
