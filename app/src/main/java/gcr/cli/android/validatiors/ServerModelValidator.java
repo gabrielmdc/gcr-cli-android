@@ -4,20 +4,20 @@ import gcr.cli.android.models.IServerModel;
 
 public class ServerModelValidator extends ModelValidator<IServerModel> {
 
-    public String validateId(int id) {
+    public static String validateId(int id) {
         String errorMsg = "Invalid id";
         String regex = "^[1-9][0-9]*$";
         String idStr = id + "";
         return validateData(regex, errorMsg, idStr);
     }
 
-    public String validateName(String name) {
+    public static String validateName(String name) {
         String errorMsg = "Invalid name";
         String regex = ".+";
         return validateData(regex, errorMsg, name);
     }
 
-    public String validateAddress(String address) {
+    public static String validateAddress(String address) {
         String errorMsg = "Invalid hostname address";
         // Hostname specification: [RFC 1123] http://tools.ietf.org/html/rfc1123
         String hostnameRegex = "^(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9])$";
@@ -28,7 +28,7 @@ public class ServerModelValidator extends ModelValidator<IServerModel> {
         return null;
     }
 
-    public String validateSocketPort(int socketPort) {
+    public static String validateSocketPort(int socketPort) {
         String errorMsg = "Invalid socket port";
         String regex = "^((2[0-7])|(1?[0-9]))$";
         String socketPortStr = socketPort + "";
