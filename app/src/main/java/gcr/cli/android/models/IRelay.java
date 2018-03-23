@@ -1,6 +1,6 @@
 package gcr.cli.android.models;
 
-public interface IRelay {
+public interface IRelay extends IModel {
     int getId();
     boolean toDelete();
     boolean isInverted();
