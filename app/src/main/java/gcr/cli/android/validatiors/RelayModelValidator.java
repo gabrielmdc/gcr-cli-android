@@ -5,22 +5,22 @@ import gcr.cli.android.models.IRelay;
 public class RelayModelValidator extends ModelValidator<IRelay> {
 
     public String validateId(int id) {
-        String errorMsg = "Invalid id";
-        String regex = "^[1-9]+[0-9]*$";
-        String idStr = id + "";
+        final String errorMsg = "Invalid id";
+        final String regex = "^[1-9]+[0-9]*$";
+        final String idStr = id + "";
         return validateData(regex, errorMsg, idStr);
     }
 
     public String validateName(String name) {
-        String errorMsg = "Invalid name";
-        String regex = ".+";
+        final String errorMsg = "Invalid name";
+        final String regex = ".+";
         return validateData(regex, errorMsg, name);
     }
 
     public String validateGpio(int gpio) {
-        String errorMsg = "Invalid gpio";
-        String regex = "^[1-2].[]$";
-        String gpioStr = gpio + "";
+        final String errorMsg = "Invalid gpio";
+        final String regex = "^((2[0-7])|(1?[0-9]))$";
+        final String gpioStr = gpio + "";
         return validateData(regex, errorMsg, gpioStr);
     }
 
