@@ -18,9 +18,13 @@ public class RelayModelValidator extends ModelValidator<IRelay> {
     }
 
     public String validateGpio(int gpio) {
+        final String gpioStr = gpio + "";
+        return validateGpio(gpioStr);
+    }
+
+    public String validateGpio(String gpioStr) {
         final String errorMsg = "Invalid gpio";
         final String regex = "^((2[0-7])|(1?[0-9]))$";
-        final String gpioStr = gpio + "";
         return validateData(regex, errorMsg, gpioStr);
     }
 
