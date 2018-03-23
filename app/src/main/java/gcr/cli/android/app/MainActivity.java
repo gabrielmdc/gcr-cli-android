@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
         builder.setPositiveButton("Edit", null);
-        final AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
         builder.setPositiveButton("Add", null);
-        final AlertDialog dialog = builder.create();
+        AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
