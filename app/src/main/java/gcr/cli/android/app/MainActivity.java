@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -25,6 +26,8 @@ import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
 import gcr.cli.android.R;
 import gcr.cli.android.adapters.ServerListAdapter;
+import gcr.cli.android.validatiors.IModelValidator;
+import gcr.cli.android.validatiors.ServerModelValidator;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -33,10 +36,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ServerListAdapter serverListAdapter;
     private FloatingActionButton createServerFloatingButton;
     private IRepositories repositories;
+    private IModelValidator<IServerModel> serverValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serverValidator = new ServerModelValidator();
         setContentView(R.layout.activity_main);
 
         // Get servers from data base
@@ -100,29 +105,32 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setTitle("Edit " + server + " server");
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
-
+        builder.setPositiveButton("Edit", null);
+        final AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
 
         serverNameEditText.setText(server.getName());
         serverAddressEditText.setText(server.getAddress());
-        socketPortEditText.setText(server.getSocketPort()+"");
+        socketPortEditText.setText(String.format("%d",server.getSocketPort()));
 
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String serverName = serverNameEditText.getText().toString().trim();
-                String serverAddress = serverAddressEditText.getText().toString().trim();
-                String socketPortStr = socketPortEditText.getText().toString().trim();
-                int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
-                if(serverName.length() > 0 && serverAddress.length() > 0) {
-                    editServer(server, serverName, serverAddress, socketPort);
-                }
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(validateAndEditServer(serverNameEditText, serverAddressEditText,
+                                socketPortEditText, server)) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
             }
         });
-
-        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
@@ -131,26 +139,93 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setTitle("Add new server");
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
-
+        builder.setPositiveButton("Add", null);
+        final AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String serverName = serverNameEditText.getText().toString().trim();
-                String serverAddress = serverAddressEditText.getText().toString().trim();
-                String socketPortStr = socketPortEditText.getText().toString().trim();
-                int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
-                if(serverName.length() > 0 && serverAddress.length() > 0) {
-                    createNewServer(serverName, serverAddress, socketPort);
-                }
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(validateAndCreateServer(serverNameEditText, serverAddressEditText,
+                                socketPortEditText)) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
             }
         });
-
-        AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private boolean validateAndEditServer(EditText serverNameEditText,
+                                          EditText serverAddressEditText,
+                                          EditText socketPortEditText,
+                                          IServerModel server) {
+
+        String name = serverNameEditText.getText().toString().trim();
+        String address = serverAddressEditText.getText().toString().trim();
+        String socketPortStr = socketPortEditText.getText().toString().trim();
+        int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
+
+        String nameErrorMsg = ((ServerModelValidator)serverValidator).validateName(name);
+        String addressErrorMsg = ((ServerModelValidator)serverValidator).validateAddress(address);
+        String socketPortErrorMsg = ((ServerModelValidator)serverValidator).validateSocketPort(socketPort);
+        if(nameErrorMsg != null) {
+            serverNameEditText.setError(nameErrorMsg);
+        }
+        if(addressErrorMsg != null) {
+            serverAddressEditText.setError(addressErrorMsg);
+        }
+        if(socketPortErrorMsg != null) {
+            socketPortEditText.setError(socketPortErrorMsg);
+        }
+        boolean isValidData = nameErrorMsg == null &&
+                addressErrorMsg == null &&
+                socketPortErrorMsg == null;
+        if(isValidData) {
+            editServer(server, name, address, socketPort);
+            return true;
+        }
+        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    private boolean validateAndCreateServer(EditText serverNameEditText,
+        EditText serverAddressEditText, EditText socketPortEditText) {
+
+        String name = serverNameEditText.getText().toString().trim();
+        String address = serverAddressEditText.getText().toString().trim();
+        String socketPortStr = socketPortEditText.getText().toString().trim();
+        int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
+
+        String nameErrorMsg = ((ServerModelValidator)serverValidator).validateName(name);
+        String addressErrorMsg = ((ServerModelValidator)serverValidator).validateAddress(address);
+        String socketPortErrorMsg = ((ServerModelValidator)serverValidator).validateSocketPort(socketPort);
+        if(nameErrorMsg != null) {
+            serverNameEditText.setError(nameErrorMsg);
+        }
+        if(addressErrorMsg != null) {
+            serverAddressEditText.setError(addressErrorMsg);
+        }
+        if(socketPortErrorMsg != null) {
+            socketPortEditText.setError(socketPortErrorMsg);
+        }
+        boolean isValidData = nameErrorMsg == null &&
+                addressErrorMsg == null &&
+                socketPortErrorMsg == null;
+        if(isValidData) {
+            createNewServer(name, address, socketPort);
+            return true;
+        }
+        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     private void editServer(IServerModel server, String name, String address, int socketPort) {
