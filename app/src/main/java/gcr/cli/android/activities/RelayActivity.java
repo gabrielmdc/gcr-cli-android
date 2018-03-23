@@ -2,7 +2,6 @@ package gcr.cli.android.activities;
 
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -16,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -32,9 +32,10 @@ import gcr.cli.android.adapters.RelayListAdapter;
 import gcr.cli.android.models.IRelay;
 import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
-import gcr.cli.android.services.ReceiverService;
 import gcr.cli.android.sockets.ConnectionStatus;
 import gcr.cli.android.sockets.ServerConnection;
+import gcr.cli.android.validatiors.IModelValidator;
+import gcr.cli.android.validatiors.RelayModelValidator;
 
 public class RelayActivity extends AppCompatActivity implements Observer {
 
@@ -45,6 +46,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     private ServerConnection serverConnection;
     private SparseArray<IRelay> relays;
     private ProgressDialog progressDialog;
+    private IModelValidator<IRelay> relayValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +54,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_relay);
 
         relays = new SparseArray<>();
+        relayValidator = new RelayModelValidator();
 
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
@@ -170,7 +173,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         builder.setTitle("Edit " + relay.getName() + " relay");
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_relay, null);
         builder.setView(viewInflated);
-
+        builder.setPositiveButton("Edit", null);
+        AlertDialog dialog = builder.create();
         final EditText relayNameEditText = viewInflated.findViewById(R.id.relayNameEditText);
         final EditText relayGpioEditText = viewInflated.findViewById(R.id.relayGpioEditText);
         final CheckBox relayInvertedCheckBox = viewInflated.findViewById(R.id.relayInvertedCheckBox);
@@ -180,17 +184,22 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         relayGpioEditText.setText(gpio);
         relayInvertedCheckBox.setChecked(relay.isInverted());
 
-        builder.setPositiveButton("Edit", new DialogInterface.OnClickListener() {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String relayName = relayNameEditText.getText().toString().trim();
-                int relayGpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
-                boolean relayIsInverted = relayInvertedCheckBox.isChecked();
-                editRelay(relay, relayName, relayIsInverted, relayGpio);
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(validateAndEditRelay(relayNameEditText, relayGpioEditText,
+                                relayInvertedCheckBox, relay)) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
             }
         });
-
-        AlertDialog dialog = builder.create();
         dialog.show();
     }
 
@@ -199,23 +208,80 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         builder.setTitle("Add new relay");
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_relay, null);
         builder.setView(viewInflated);
-
+        builder.setPositiveButton("Add", null);
+        AlertDialog dialog = builder.create();
         final EditText relayNameEditText = viewInflated.findViewById(R.id.relayNameEditText);
         final EditText relayGpioEditText = viewInflated.findViewById(R.id.relayGpioEditText);
         final CheckBox relayInvertedCheckBox = viewInflated.findViewById(R.id.relayInvertedCheckBox);
 
-        builder.setPositiveButton("Add", new DialogInterface.OnClickListener() {
+        dialog.setOnShowListener(new DialogInterface.OnShowListener() {
+
             @Override
-            public void onClick(DialogInterface dialog, int which) {
-                String name = relayNameEditText.getText().toString().trim();
-                int gpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
-                boolean inverted = relayInvertedCheckBox.isChecked();
-                createRelay(name, gpio, inverted);
+            public void onShow(final DialogInterface dialog) {
+                Button button = ((AlertDialog) dialog).getButton(AlertDialog.BUTTON_POSITIVE);
+                button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if(validateAndCreateRelay(relayNameEditText, relayGpioEditText,
+                                relayInvertedCheckBox)) {
+                            dialog.dismiss();
+                        }
+                    }
+                });
             }
         });
-
-        AlertDialog dialog = builder.create();
         dialog.show();
+    }
+
+    private boolean validateAndCreateRelay(EditText relayNameEditText,
+                                         EditText relayGpioEditText,
+                                         CheckBox relayInvertedCheckBox) {
+
+        String name = relayNameEditText.getText().toString().trim();
+        int gpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
+        boolean relayIsInverted = relayInvertedCheckBox.isChecked();
+
+        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
+        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpio);
+        if(nameErrorMsg != null) {
+            relayNameEditText.setError(nameErrorMsg);
+        }
+        if(gpioErrorMsg != null) {
+            relayGpioEditText.setError(gpioErrorMsg);
+        }
+        boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
+        if(isValidData) {
+            createRelay(name, gpio, relayIsInverted);
+            return true;
+        }
+        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    private boolean validateAndEditRelay(EditText relayNameEditText,
+                                          EditText relayGpioEditText,
+                                          CheckBox relayInvertedCheckBox,
+                                          IRelay relay) {
+
+        String name = relayNameEditText.getText().toString().trim();
+        int gpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
+        boolean relayIsInverted = relayInvertedCheckBox.isChecked();
+
+        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
+        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpio);
+        if(nameErrorMsg != null) {
+            relayNameEditText.setError(nameErrorMsg);
+        }
+        if(gpioErrorMsg != null) {
+            relayGpioEditText.setError(gpioErrorMsg);
+        }
+        boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
+        if(isValidData) {
+            editRelay(relay, name, relayIsInverted, gpio);
+            return true;
+        }
+        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     private void createRelay(String name, int gpio, boolean inverted) {
