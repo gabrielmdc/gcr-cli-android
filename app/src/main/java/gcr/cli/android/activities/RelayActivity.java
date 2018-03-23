@@ -238,11 +238,11 @@ public class RelayActivity extends AppCompatActivity implements Observer {
                                          CheckBox relayInvertedCheckBox) {
 
         String name = relayNameEditText.getText().toString().trim();
-        int gpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
+        String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
         String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpio);
+        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
         if(nameErrorMsg != null) {
             relayNameEditText.setError(nameErrorMsg);
         }
@@ -251,6 +251,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         }
         boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
         if(isValidData) {
+            int gpio = Integer.parseInt(gpioStr);
             createRelay(name, gpio, relayIsInverted);
             return true;
         }
@@ -264,11 +265,11 @@ public class RelayActivity extends AppCompatActivity implements Observer {
                                           IRelay relay) {
 
         String name = relayNameEditText.getText().toString().trim();
-        int gpio = Integer.parseInt(relayGpioEditText.getText().toString().trim());
+        String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
         String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpio);
+        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
         if(nameErrorMsg != null) {
             relayNameEditText.setError(nameErrorMsg);
         }
@@ -277,6 +278,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         }
         boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
         if(isValidData) {
+            int gpio = Integer.parseInt(gpioStr);
             editRelay(relay, name, relayIsInverted, gpio);
             return true;
         }
