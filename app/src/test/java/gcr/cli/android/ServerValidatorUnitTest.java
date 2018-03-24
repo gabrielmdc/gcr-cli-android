@@ -12,66 +12,64 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Server validator unit test
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ServerValidatorUnitTest {
 
-    @Mock
-    private ServerValidator validator;
     private ServerErrorKeys error;
-
-    public ServerValidatorUnitTest() {
-        validator = new ServerValidator();
-    }
 
     @Test
     public void id() throws Exception {
+        ServerValidator validator = new ServerValidator();
         error = validator.validateId(1);
         assertEquals(null, error);
         error = validator.validateId(0);
-        assertNotEquals(error, ServerErrorKeys.ID);
+        assertEquals(ServerErrorKeys.ID, error);
         error = validator.validateId(-1);
-        assertNotEquals(error, ServerErrorKeys.ID);
+        assertEquals(ServerErrorKeys.ID, error);
     }
 
     @Test
     public void name() throws Exception {
+        ServerValidator validator = new ServerValidator();
         error = validator.validateName("Server name");
         assertEquals(null, error);
         error = validator.validateName("");
-        assertEquals(error, ServerErrorKeys.NAME);
+        assertEquals(ServerErrorKeys.NAME, error);
         error = validator.validateName(null);
-        assertNotEquals(error, ServerErrorKeys.NAME);
+        assertEquals(ServerErrorKeys.NAME, error);
     }
 
     @Test
     public void address() throws Exception {
+        ServerValidator validator = new ServerValidator();
         error = validator.validateAddress("0.0.0.0");
         assertEquals(null, error);
         error = validator.validateAddress("address");
         assertEquals(null, error);
 
         error = validator.validateAddress("add ress");
-        assertEquals(error, ServerErrorKeys.ADDRESS);
+        assertEquals(ServerErrorKeys.ADDRESS, error);
         error = validator.validateAddress("");
-        assertEquals(error, ServerErrorKeys.ADDRESS);
+        assertEquals(ServerErrorKeys.ADDRESS, error);
         error = validator.validateAddress(null);
-        assertEquals(error, ServerErrorKeys.ADDRESS);
+        assertEquals(ServerErrorKeys.ADDRESS, error);
     }
 
     @Test
     public void socketPort() throws Exception {
+        ServerValidator validator = new ServerValidator();
         error = validator.validateSocketPort(0);
         assertEquals(null, error);
         error = validator.validateSocketPort(65535);
         assertEquals(null, error);
 
         error = validator.validateSocketPort(-1);
-        assertEquals(error, ServerErrorKeys.SOCKET_PORT);
+        assertEquals(ServerErrorKeys.SOCKET_PORT, error);
         error = validator.validateSocketPort(65536);
-        assertEquals(error, ServerErrorKeys.SOCKET_PORT);
+        assertEquals(ServerErrorKeys.SOCKET_PORT, error);
     }
 }

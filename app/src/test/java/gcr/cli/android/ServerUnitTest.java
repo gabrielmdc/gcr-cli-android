@@ -7,41 +7,30 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
-import gcr.cli.android.models.IRelay;
-import gcr.cli.android.models.IServerModel;
-import gcr.cli.android.models.Relay;
+import gcr.cli.android.models.IServer;
 import gcr.cli.android.models.realm.Server;
-import gcr.cli.android.validatiors.IModelValidator;
-import gcr.cli.android.validatiors.RelayValidator;
 import gcr.cli.android.validatiors.ServerValidator;
-import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
+import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Server unit test
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ServerUnitTest {
 
-    @Mock
-    private ServerValidator validator;
-
-    public ServerUnitTest() {
-        validator = new ServerValidator();
-    }
-
     @Test
     public void all() throws Exception {
-        IServer relay = new Relay(1, "relay name", 2, false, false, false);
-        List<RelayErrorKeys> errors = validator.validate(relay);
+        ServerValidator validator = new ServerValidator();
+        IServer server = new Server(1, "server name", "0.0.0.0", 0);
+        List<ServerErrorKeys> errors = validator.validate(server);
         assertEquals(0, errors.size());
 
-        IRelay relay2 = new Relay(0, "", 30, false, false, false);
-        List<RelayErrorKeys> errors2 = validator.validate(relay2);
-        assertEquals(3, errors.size());
+        IServer server2 = new Server(0, "", null, -1);
+        List<ServerErrorKeys> errors2 = validator.validate(server2);
+        assertEquals(4, errors2.size());
     }
 }

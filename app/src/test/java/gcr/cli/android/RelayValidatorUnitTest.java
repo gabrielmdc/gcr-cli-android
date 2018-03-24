@@ -12,54 +12,50 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Relay validator unit test
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
 @RunWith(MockitoJUnitRunner.class)
 public class RelayValidatorUnitTest {
 
-    @Mock
-    private RelayValidator validator;
-    @Mock
     private RelayErrorKeys error;
-
-    public RelayValidatorUnitTest() {
-        validator = new RelayValidator();
-    }
 
     @Test
     public void id() throws Exception {
+        RelayValidator validator = new RelayValidator();
         error = validator.validateId(1);
         assertEquals(null, error);
         error = validator.validateId(0);
-        assertNotEquals(error, RelayErrorKeys.ID);
+        assertEquals(RelayErrorKeys.ID, error);
         error = validator.validateId(-1);
-        assertNotEquals(error, RelayErrorKeys.ID);
+        assertEquals(RelayErrorKeys.ID, error);
     }
 
     @Test
     public void name() throws Exception {
+        RelayValidator validator = new RelayValidator();
         error = validator.validateName("Relay name");
         assertEquals(null, error);
         error = validator.validateName("");
-        assertEquals(error, RelayErrorKeys.NAME);
+        assertEquals(RelayErrorKeys.NAME, error);
         error = validator.validateName(null);
-        assertNotEquals(error, RelayErrorKeys.NAME);
+        assertEquals(RelayErrorKeys.NAME, error);
     }
 
     @Test
     public void gpio() throws Exception {
+        RelayValidator validator = new RelayValidator();
         error = validator.validateGpio(1);
         assertEquals(null, error);
         error = validator.validateGpio(27);
         assertEquals(null, error);
 
         error = validator.validateGpio(-1);
-        assertEquals(error, RelayErrorKeys.GPIO);
+        assertEquals(RelayErrorKeys.GPIO, error);
         error = validator.validateGpio(28);
-        assertEquals(error, RelayErrorKeys.GPIO);
+        assertEquals(RelayErrorKeys.GPIO, error);
         error = validator.validateGpio("1.2");
-        assertEquals(error, RelayErrorKeys.GPIO);
+        assertEquals(RelayErrorKeys.GPIO, error);
     }
 }
