@@ -34,8 +34,8 @@ import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
 import gcr.cli.android.sockets.ConnectionStatus;
 import gcr.cli.android.sockets.ServerConnection;
-import gcr.cli.android.validatiors.IModelValidator;
-import gcr.cli.android.validatiors.RelayModelValidator;
+import gcr.cli.android.validatiors.ModelValidator;
+import gcr.cli.android.validatiors.RelayValidator;
 
 public class RelayActivity extends AppCompatActivity implements Observer {
 
@@ -46,7 +46,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     private ServerConnection serverConnection;
     private SparseArray<IRelay> relays;
     private ProgressDialog progressDialog;
-    private IModelValidator<IRelay> relayValidator;
+    private ModelValidator<IRelay> relayValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +54,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_relay);
 
         relays = new SparseArray<>();
-        relayValidator = new RelayModelValidator();
+        relayValidator = new RelayValidator();
 
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
@@ -241,8 +241,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
-        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
+        String nameErrorMsg = ((RelayValidator) relayValidator).validateName(name);
+        String gpioErrorMsg = ((RelayValidator) relayValidator).validateGpio(gpioStr);
         if(nameErrorMsg != null) {
             relayNameEditText.setError(nameErrorMsg);
         }
@@ -268,8 +268,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
-        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
+        String nameErrorMsg = ((RelayValidator) relayValidator).validateName(name);
+        String gpioErrorMsg = ((RelayValidator) relayValidator).validateGpio(gpioStr);
         if(nameErrorMsg != null) {
             relayNameEditText.setError(nameErrorMsg);
         }
