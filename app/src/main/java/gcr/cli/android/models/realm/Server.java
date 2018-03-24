@@ -1,11 +1,11 @@
 package gcr.cli.android.models.realm;
 
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 import io.realm.annotations.Required;
 
-public class Server extends RealmObject implements IServerModel {
+public class Server extends RealmObject implements IServer {
 
     @PrimaryKey
     private int id;

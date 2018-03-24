@@ -20,7 +20,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import gcr.cli.android.activities.RelayActivity;
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 import gcr.cli.android.repositories.IRepositories;
 import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
@@ -32,7 +32,7 @@ import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
     private ListView serverListView;
-    private List<IServerModel> servers;
+    private List<IServer> servers;
     private ServerListAdapter serverListAdapter;
     private FloatingActionButton createServerFloatingButton;
     private IRepositories repositories;
@@ -68,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
         Intent intent = new Intent(MainActivity.this, RelayActivity.class);
-        IServerModel serverSelected = servers.get(position);
+        IServer serverSelected = servers.get(position);
         intent.putExtra("serverId", serverSelected.getId());
         startActivity(intent);
     }
@@ -78,7 +78,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         MenuInflater inflater = getMenuInflater();
         AdapterView.AdapterContextMenuInfo info = (AdapterView.AdapterContextMenuInfo) menuInfo;
-        IServerModel serverSelected = servers.get(info.position);
+        IServer serverSelected = servers.get(info.position);
         menu.setHeaderTitle(serverSelected.getName());
         inflater.inflate(R.menu.server_context_menu, menu);
         super.onCreateContextMenu(menu, v, menuInfo);
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onContextItemSelected(item);
     }
 
-    private void showEditServerDialog(final IServerModel server) {
+    private void showEditServerDialog(final IServer server) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Edit " + server + " server");
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private boolean validateAndEditServer(EditText serverNameEditText,
                                           EditText serverAddressEditText,
                                           EditText socketPortEditText,
-                                          IServerModel server) {
+                                          IServer server) {
 
         String name = serverNameEditText.getText().toString().trim();
         String address = serverAddressEditText.getText().toString().trim();
@@ -234,14 +234,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return false;
     }
 
-    private void editServer(IServerModel server, String name, String address, int socketPort) {
+    private void editServer(IServer server, String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
         server = serverRepo.edit(server, name, address, socketPort);
         Toast.makeText(this, "Server '" + server + "' modified", Toast.LENGTH_SHORT).show();
     }
 
     private void deleteServer(int position) {
-        IServerModel server = servers.get(position);
+        IServer server = servers.get(position);
         IServerRepository serverRepo = repositories.getServerRepository();
         String serverDescription = server.toString();
         servers.remove(server);
@@ -251,7 +251,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void createNewServer(String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
-        IServerModel server = serverRepo.create(name, address, socketPort);
+        IServer server = serverRepo.create(name, address, socketPort);
         servers.add(server);
         serverListAdapter.notifyDataSetChanged();
         Toast.makeText(this, "Server '" + server + "' added", Toast.LENGTH_SHORT).show();

@@ -22,11 +22,10 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 import gcr.cli.android.repositories.IRepositories;
 import gcr.cli.android.R;
 import gcr.cli.android.adapters.RelayListAdapter;
@@ -41,7 +40,7 @@ import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 public class RelayActivity extends AppCompatActivity implements Observer {
 
     private ListView relayListView;
-    private IServerModel server;
+    private IServer server;
     private IRepositories repositories;
     private RelayListAdapter relayListAdapter;
     private ServerConnection serverConnection;
