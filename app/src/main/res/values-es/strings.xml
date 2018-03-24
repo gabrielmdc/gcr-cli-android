@@ -1,2 +1,52 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <!-- RELAY -->
+    <string name="relay_error_key_id">Id inválido</string>
+    <string name="relay_error_key_name">Nombre inválido</string>
+    <string name="relay_error_key_gpio">Gpio inválido</string>
+
+    <string name="relayCap">Relay</string>
+    <string name="relayCap_name">Nombre del relay</string>
+
+    <string name="relay_dialog_hint_name">Nombre</string>
+    <string name="relay_dialog_hint_gpio">Gpio</string>
+    <string name="relay_dialog_hint_inverted">Invertido</string>
+    <string name="relay_dialog_hint_inverted_text">Un relay invertido es aquel que cuando
+        lo enciendes, el estado del relay es el opuesto (apagado)</string>
+    <string name="relay_add">Añadir nuevo relay</string>
+    <string name="relay_edit">Editar relay</string>
+
+    <!-- SERVER -->
+    <string name="server_error_key_id">Id inválido</string>
+    <string name="server_error_key_name">Nombre inválido</string>
+    <string name="server_error_key_address">Dirección de host inválida</string>
+    <string name="server_error_key_socket_port">Puerto del socket inválido</string>
+
+    <string name="serverCap">Servidor</string>
+    <string name="serverCap_name">Nombre del relay</string>
+
+    <string name="server_dialog_hint_name">Nombre</string>
+    <string name="server_dialog_hint_address">Dirección del servidor</string>
+    <string name="server_dialog_hint_socket_port">Puerto del socket: 10000 por defecto</string>
+
+    <string name="server_added">Servidor añadido</string>
+    <string name="server_deleted">Servidor borrado</string>
+    <string name="server_modified">Servidor modificado</string>
+
+    <string name="server_add">Añadir nuevo servidor</string>
+    <string name="server_edit">Editar servidor</string>
+
+    <!-- GENERAL -->
+    <string name="app_name">Relay Remote Control</string>
+    <string name="added">añadido</string>
+    <string name="deleted">borrado</string>
+    <string name="modified">modificado</string>
+    <string name="options">Opciones</string>
+
+    <string name="add">Añadir</string>
+    <string name="delete">Borrar</string>
+    <string name="edit">Editar</string>
+    <string name="invalid_data">Datos inválidos</string>
+    <string name="connected">Conectado</string>
+    <string name="connection_refused">Conexión denegada</string>
+    <string name="connection_closed">Conexión cerrada</string>
+</resources>

@@ -13,14 +13,14 @@
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:padding='30dp'
-        android:text="Relay name" />
+        android:text="@string/relayCap_name" />
 
     <ImageButton
         android:id="@+id/relayStateBtn"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:background="@android:color/transparent"
-        android:contentDescription="Options"
+        android:contentDescription="@string/options"
         android:scaleType="fitXY"
         android:src="@drawable/ic_power_off" />
 
@@ -29,6 +29,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@android:color/transparent"
-        android:contentDescription="Options"
+        android:contentDescription="@string/options"
         android:src="@drawable/ic_options" />
 </LinearLayout>

@@ -131,7 +131,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
 
         switch(status) {
             case CONNECTED:
-                Toast.makeText(this, "Connected", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.connected), Toast.LENGTH_SHORT).show();
                 relayListAdapter = new RelayListAdapter(this, R.layout.list_relay, relays,
                         serverConnection);
                 relayListView = findViewById(R.id.relayListView);
@@ -145,11 +145,11 @@ public class RelayActivity extends AppCompatActivity implements Observer {
                 if(progressDialog != null) {
                     progressDialog.dismiss();
                 }
-                Toast.makeText(this, "Connection refused", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.connection_refused), Toast.LENGTH_SHORT).show();
                 this.finish();
                 break;
             case DISCONNECTED:
-                Toast.makeText(this, "Connection closed", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString(R.string.connection_closed), Toast.LENGTH_SHORT).show();
                 this.finish();
         }
     }
@@ -170,10 +170,10 @@ public class RelayActivity extends AppCompatActivity implements Observer {
 
     private void showEditRelayDialog(final IRelay relay) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit " + relay.getName() + " relay");
+        builder.setTitle(getString(R.string.relay_edit));
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_relay, null);
         builder.setView(viewInflated);
-        builder.setPositiveButton("Edit", null);
+        builder.setPositiveButton(getString(R.string.edit), null);
         AlertDialog dialog = builder.create();
         final EditText relayNameEditText = viewInflated.findViewById(R.id.relayNameEditText);
         final EditText relayGpioEditText = viewInflated.findViewById(R.id.relayGpioEditText);
@@ -205,10 +205,10 @@ public class RelayActivity extends AppCompatActivity implements Observer {
 
     private void showCreateRelayDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add new relay");
+        builder.setTitle(getString(R.string.relay_add));
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_relay, null);
         builder.setView(viewInflated);
-        builder.setPositiveButton("Add", null);
+        builder.setPositiveButton(getString(R.string.add), null);
         AlertDialog dialog = builder.create();
         final EditText relayNameEditText = viewInflated.findViewById(R.id.relayNameEditText);
         final EditText relayGpioEditText = viewInflated.findViewById(R.id.relayGpioEditText);
@@ -257,7 +257,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
             createRelay(name, gpio, relayIsInverted);
             return true;
         }
-        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.invalid_data);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -286,7 +287,8 @@ public class RelayActivity extends AppCompatActivity implements Observer {
             editRelay(relay, name, relayIsInverted, gpio);
             return true;
         }
-        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.invalid_data);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return false;
     }
 

@@ -1,8 +1,11 @@
 package gcr.cli.android.validatiors;
 
+import android.content.res.Resources;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import gcr.cli.android.R;
 import gcr.cli.android.models.IRelay;
 import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 
@@ -54,11 +57,11 @@ public class RelayValidator extends ModelValidator<IRelay, RelayErrorKeys> {
     public String getErrorMessage(RelayErrorKeys key) {
         switch(key) {
             case ID:
-                return "Invalid id";
+                return Resources.getSystem().getString(R.string.relay_error_key_id);
             case NAME:
-                return "Invalid name";
+                return Resources.getSystem().getString(R.string.relay_error_key_name);
             case GPIO:
-                return "Invalid gpio";
+                return Resources.getSystem().getString(R.string.relay_error_key_gpio);
         }
         return null;
     }
