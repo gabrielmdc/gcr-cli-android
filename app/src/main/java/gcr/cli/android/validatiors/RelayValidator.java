@@ -2,7 +2,9 @@ package gcr.cli.android.validatiors;
 
 import gcr.cli.android.models.IRelay;
 
-public class RelayModelValidator extends ModelValidator<IRelay> {
+public class RelayValidator extends ModelValidator<IRelay> {
+
+    public static final int ERROR_KEY_ID = 0;
 
     public String validateId(int id) {
         final String errorMsg = "Invalid id";
@@ -24,7 +26,7 @@ public class RelayModelValidator extends ModelValidator<IRelay> {
 
     public String validateGpio(String gpioStr) {
         final String errorMsg = "Invalid gpio";
-        final String regex = "^((2[0-7])|(1?[0-9]))$";
+        final String regex = "^((2[0-7])|(1[0-9])|[1-9])$";
         return validateData(regex, errorMsg, gpioStr);
     }
 

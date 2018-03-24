@@ -2,7 +2,7 @@ package gcr.cli.android.validatiors;
 
 import gcr.cli.android.models.IServerModel;
 
-public class ServerModelValidator extends ModelValidator<IServerModel> {
+public class ServerValidator extends ModelValidator<IServerModel> {
 
     public String validateId(int id) {
         final String errorMsg = "Invalid id";

@@ -3,7 +3,10 @@ package gcr.cli.android.validatiors;
 
 import gcr.cli.android.models.IModel;
 
-public abstract class ModelValidator<T extends IModel> implements IModelValidator<T> {
+public abstract class ModelValidator<T extends IModel> {
+
+    abstract String validate(T model);
+
     protected static String validateData(String regex, String errorMsg, String data, boolean nullable) {
         if(nullable && data == null) {
             return null;
