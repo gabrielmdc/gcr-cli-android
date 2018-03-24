@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -34,8 +35,8 @@ import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
 import gcr.cli.android.sockets.ConnectionStatus;
 import gcr.cli.android.sockets.ServerConnection;
-import gcr.cli.android.validatiors.IModelValidator;
-import gcr.cli.android.validatiors.RelayModelValidator;
+import gcr.cli.android.validatiors.RelayValidator;
+import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 
 public class RelayActivity extends AppCompatActivity implements Observer {
 
@@ -46,7 +47,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
     private ServerConnection serverConnection;
     private SparseArray<IRelay> relays;
     private ProgressDialog progressDialog;
-    private IModelValidator<IRelay> relayValidator;
+    private RelayValidator relayValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,7 +55,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_relay);
 
         relays = new SparseArray<>();
-        relayValidator = new RelayModelValidator();
+        relayValidator = new RelayValidator();
 
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
@@ -241,15 +242,17 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
-        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
-        if(nameErrorMsg != null) {
-            relayNameEditText.setError(nameErrorMsg);
+        RelayErrorKeys nameErrorKey = relayValidator.validateName(name);
+        RelayErrorKeys gpioErrorKey = relayValidator.validateGpio(gpioStr);
+        if(nameErrorKey != null) {
+            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            relayNameEditText.setError(errorMsg);
         }
-        if(gpioErrorMsg != null) {
-            relayGpioEditText.setError(gpioErrorMsg);
+        if(gpioErrorKey != null) {
+            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            relayGpioEditText.setError(errorMsg);
         }
-        boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
+        boolean isValidData = nameErrorKey == null && gpioErrorKey == null;
         if(isValidData) {
             int gpio = Integer.parseInt(gpioStr);
             createRelay(name, gpio, relayIsInverted);
@@ -268,15 +271,17 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         String gpioStr = relayGpioEditText.getText().toString().trim();
         boolean relayIsInverted = relayInvertedCheckBox.isChecked();
 
-        String nameErrorMsg = ((RelayModelValidator) relayValidator).validateName(name);
-        String gpioErrorMsg = ((RelayModelValidator) relayValidator).validateGpio(gpioStr);
-        if(nameErrorMsg != null) {
-            relayNameEditText.setError(nameErrorMsg);
+        RelayErrorKeys nameErrorKey = relayValidator.validateName(name);
+        RelayErrorKeys gpioErrorKey = relayValidator.validateGpio(gpioStr);
+        if(nameErrorKey != null) {
+            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            relayNameEditText.setError(errorMsg);
         }
-        if(gpioErrorMsg != null) {
-            relayGpioEditText.setError(gpioErrorMsg);
+        if(gpioErrorKey != null) {
+            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            relayGpioEditText.setError(errorMsg);
         }
-        boolean isValidData = nameErrorMsg == null && gpioErrorMsg == null;
+        boolean isValidData = nameErrorKey == null && gpioErrorKey == null;
         if(isValidData) {
             int gpio = Integer.parseInt(gpioStr);
             editRelay(relay, name, relayIsInverted, gpio);

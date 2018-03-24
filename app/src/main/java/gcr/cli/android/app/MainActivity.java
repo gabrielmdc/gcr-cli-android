@@ -26,8 +26,8 @@ import gcr.cli.android.repositories.IServerRepository;
 import gcr.cli.android.repositories.realm.RealmRepositories;
 import gcr.cli.android.R;
 import gcr.cli.android.adapters.ServerListAdapter;
-import gcr.cli.android.validatiors.IModelValidator;
-import gcr.cli.android.validatiors.ServerModelValidator;
+import gcr.cli.android.validatiors.ServerValidator;
+import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -36,12 +36,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ServerListAdapter serverListAdapter;
     private FloatingActionButton createServerFloatingButton;
     private IRepositories repositories;
-    private IModelValidator<IServerModel> serverValidator;
+    private ServerValidator serverValidator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serverValidator = new ServerModelValidator();
+        serverValidator = new ServerValidator();
         setContentView(R.layout.activity_main);
 
         // Get servers from data base
@@ -174,21 +174,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String socketPortStr = socketPortEditText.getText().toString().trim();
         int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
 
-        String nameErrorMsg = ((ServerModelValidator)serverValidator).validateName(name);
-        String addressErrorMsg = ((ServerModelValidator)serverValidator).validateAddress(address);
-        String socketPortErrorMsg = ((ServerModelValidator)serverValidator).validateSocketPort(socketPort);
-        if(nameErrorMsg != null) {
-            serverNameEditText.setError(nameErrorMsg);
+        ServerErrorKeys nameErrorKey = serverValidator.validateName(name);
+        ServerErrorKeys addressErrorKey = serverValidator.validateAddress(address);
+        ServerErrorKeys socketPortErrorKey = serverValidator.validateSocketPort(socketPort);
+        if(nameErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(nameErrorKey);
+            serverNameEditText.setError(errorMsg);
         }
-        if(addressErrorMsg != null) {
-            serverAddressEditText.setError(addressErrorMsg);
+        if(addressErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(addressErrorKey);
+            serverAddressEditText.setError(errorMsg);
         }
-        if(socketPortErrorMsg != null) {
-            socketPortEditText.setError(socketPortErrorMsg);
+        if(socketPortErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(socketPortErrorKey);
+            socketPortEditText.setError(errorMsg);
         }
-        boolean isValidData = nameErrorMsg == null &&
-                addressErrorMsg == null &&
-                socketPortErrorMsg == null;
+        boolean isValidData = nameErrorKey == null &&
+                addressErrorKey == null &&
+                socketPortErrorKey == null;
         if(isValidData) {
             editServer(server, name, address, socketPort);
             return true;
@@ -205,21 +208,24 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String socketPortStr = socketPortEditText.getText().toString().trim();
         int socketPort = socketPortStr.isEmpty()? 10000 : Integer.parseInt(socketPortStr);
 
-        String nameErrorMsg = ((ServerModelValidator)serverValidator).validateName(name);
-        String addressErrorMsg = ((ServerModelValidator)serverValidator).validateAddress(address);
-        String socketPortErrorMsg = ((ServerModelValidator)serverValidator).validateSocketPort(socketPort);
-        if(nameErrorMsg != null) {
-            serverNameEditText.setError(nameErrorMsg);
+        ServerErrorKeys nameErrorKey = serverValidator.validateName(name);
+        ServerErrorKeys addressErrorKey = serverValidator.validateAddress(address);
+        ServerErrorKeys socketPortErrorKey = serverValidator.validateSocketPort(socketPort);
+        if(nameErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(nameErrorKey);
+            serverNameEditText.setError(errorMsg);
         }
-        if(addressErrorMsg != null) {
-            serverAddressEditText.setError(addressErrorMsg);
+        if(addressErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(addressErrorKey);
+            serverAddressEditText.setError(errorMsg);
         }
-        if(socketPortErrorMsg != null) {
-            socketPortEditText.setError(socketPortErrorMsg);
+        if(socketPortErrorKey != null) {
+            String errorMsg = serverValidator.getErrorMessage(socketPortErrorKey);
+            socketPortEditText.setError(errorMsg);
         }
-        boolean isValidData = nameErrorMsg == null &&
-                addressErrorMsg == null &&
-                socketPortErrorMsg == null;
+        boolean isValidData = nameErrorKey == null &&
+                addressErrorKey == null &&
+                socketPortErrorKey == null;
         if(isValidData) {
             createNewServer(name, address, socketPort);
             return true;
