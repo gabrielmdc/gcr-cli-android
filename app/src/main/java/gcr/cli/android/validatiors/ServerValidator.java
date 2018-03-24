@@ -3,10 +3,10 @@ package gcr.cli.android.validatiors;
 import java.util.ArrayList;
 import java.util.List;
 
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 
-public class ServerValidator extends ModelValidator<IServerModel, ServerErrorKeys> {
+public class ServerValidator extends ModelValidator<IServer, ServerErrorKeys> {
 
     public ServerErrorKeys validateId(int id) {
         final String regex = "^[1-9][0-9]*$";
@@ -36,7 +36,7 @@ public class ServerValidator extends ModelValidator<IServerModel, ServerErrorKey
     }
 
     @Override
-    public List<ServerErrorKeys> validate(IServerModel model) {
+    public List<ServerErrorKeys> validate(IServer model) {
         List<ServerErrorKeys> errorKeys = new ArrayList<>();
 
         ServerErrorKeys errorKey = validateId(model.getId());

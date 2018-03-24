@@ -9,16 +9,16 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 import gcr.cli.android.R;
 
 public class ServerListAdapter extends BaseAdapter {
 
     private Context context;
     private int layout;
-    private List<IServerModel> servers;
+    private List<IServer> servers;
 
-    public ServerListAdapter(Context context, int layout, List<IServerModel> servers) {
+    public ServerListAdapter(Context context, int layout, List<IServer> servers) {
         this.context = context;
         this.layout = layout;
         this.servers = servers;
@@ -40,7 +40,7 @@ public class ServerListAdapter extends BaseAdapter {
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
-        IServerModel currentServer = getItem(position);
+        IServer currentServer = getItem(position);
         viewHolder.serverNameTextView.setText(currentServer.getName());
         return convertView;
     }
@@ -51,7 +51,7 @@ public class ServerListAdapter extends BaseAdapter {
     }
 
     @Override
-    public IServerModel getItem(int position) {
+    public IServer getItem(int position) {
         return servers.get(position);
     }
 

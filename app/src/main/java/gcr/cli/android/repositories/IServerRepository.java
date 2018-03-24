@@ -2,13 +2,13 @@ package gcr.cli.android.repositories;
 
 import java.util.List;
 
-import gcr.cli.android.models.IServerModel;
+import gcr.cli.android.models.IServer;
 
 public interface IServerRepository {
-    IServerModel findById(int id);
-    IServerModel findByAddressAndSocketPort(String address, int socketPort);
-    IServerModel create(String name, String address, int socketPort);
-    List<IServerModel> getAll();
-    void delete(IServerModel server);
-    IServerModel edit(IServerModel server, String name, String address, int socketPort);
+    IServer findById(int id);
+    IServer findByAddressAndSocketPort(String address, int socketPort);
+    IServer create(String name, String address, int socketPort);
+    List<IServer> getAll();
+    void delete(IServer server);
+    IServer edit(IServer server, String name, String address, int socketPort);
 }
