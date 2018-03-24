@@ -2,17 +2,20 @@ package gcr.cli.android;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+
+import java.util.List;
 
 import gcr.cli.android.models.IRelay;
 import gcr.cli.android.models.Relay;
-import gcr.cli.android.validatiors.IModelValidator;
-import gcr.cli.android.validatiors.RelayModelValidator;
+import gcr.cli.android.validatiors.RelayValidator;
+import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 
 import static org.junit.Assert.assertEquals;
 
 /**
- * Example local unit test, which will execute on the development machine (host).
+ * Relay unit test
  *
  * @see <a href="http://d.android.com/tools/testing">Testing documentation</a>
  */
@@ -20,10 +23,14 @@ import static org.junit.Assert.assertEquals;
 public class RelayUnitTest {
 
     @Test
-    public void id_isCorrect() throws Exception {
+    public void all() throws Exception {
+        RelayValidator validator = new RelayValidator();
         IRelay relay = new Relay(1, "relay name", 2, false, false, false);
-        IModelValidator<IRelay> relayValidator = new RelayModelValidator();
-        String res = relayValidator.validate(relay);
-        assertEquals(null, res);
+        List<RelayErrorKeys> errors = validator.validate(relay);
+        assertEquals(0, errors.size());
+
+        IRelay relay2 = new Relay(0, "", 30, false, false, false);
+        List<RelayErrorKeys> errors2 = validator.validate(relay2);
+        assertEquals(3, errors2.size());
     }
 }
