@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
-            android:hint="Name"
+            android:hint="@string/relay_dialog_hint_name"
             android:ems="10" />
 
         <EditText
@@ -23,7 +23,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ems="10"
-            android:hint="Gpio"
+            android:hint="@string/relay_dialog_hint_gpio"
             android:inputType="number" />
 
         <CheckBox
@@ -32,13 +32,13 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:tag="Inverted"
-            android:text="Inverted"/>
+            android:text="@string/relay_dialog_hint_inverted"/>
 
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="An inverted relay is a relay that when you turn it on, then the state of the relay is the opposite (off)" />
+            android:text="@string/relay_dialog_hint_inverted_text" />
 
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>

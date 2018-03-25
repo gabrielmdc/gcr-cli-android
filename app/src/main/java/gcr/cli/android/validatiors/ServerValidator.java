@@ -1,8 +1,11 @@
 package gcr.cli.android.validatiors;
 
+import android.content.res.Resources;
+
 import java.util.ArrayList;
 import java.util.List;
 
+import gcr.cli.android.R;
 import gcr.cli.android.models.IServer;
 import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 
@@ -62,13 +65,13 @@ public class ServerValidator extends ModelValidator<IServer, ServerErrorKeys> {
     public String getErrorMessage(ServerErrorKeys key) {
         switch(key) {
             case ID:
-                return "Invalid id";
+                return Resources.getSystem().getString(R.string.server_error_key_id);
             case NAME:
-                return "Invalid name";
+                return Resources.getSystem().getString(R.string.server_error_key_name);
             case ADDRESS:
-                return "Invalid hostname address";
+                return Resources.getSystem().getString(R.string.server_error_key_address);
             case SOCKET_PORT:
-                return "Invalid socket port";
+                return Resources.getSystem().getString(R.string.server_error_key_socket_port);
         }
         return null;
     }

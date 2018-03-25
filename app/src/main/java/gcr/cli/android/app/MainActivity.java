@@ -102,10 +102,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void showEditServerDialog(final IServer server) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit " + server + " server");
+        builder.setTitle(getString(R.string.server_edit));
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
-        builder.setPositiveButton("Edit", null);
+        builder.setPositiveButton(getString(R.string.edit), null);
         AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
@@ -136,10 +136,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private void showCreateServerDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Add new server");
+        builder.setTitle(getString(R.string.server_add));
         View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_server, null);
         builder.setView(viewInflated);
-        builder.setPositiveButton("Add", null);
+        builder.setPositiveButton(getString(R.string.add), null);
         AlertDialog dialog = builder.create();
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
@@ -196,7 +196,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             editServer(server, name, address, socketPort);
             return true;
         }
-        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.invalid_data);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -230,14 +231,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             createNewServer(name, address, socketPort);
             return true;
         }
-        Toast.makeText(this, "Invalid data form", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.invalid_data);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
         return false;
     }
 
     private void editServer(IServer server, String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
         server = serverRepo.edit(server, name, address, socketPort);
-        Toast.makeText(this, "Server '" + server + "' modified", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.server_modified);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void deleteServer(int position) {
@@ -246,7 +249,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         String serverDescription = server.toString();
         servers.remove(server);
         serverRepo.delete(server);
-        Toast.makeText(this, "Server '" + serverDescription + "' deleted", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.server_deleted);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void createNewServer(String name, String address, int socketPort) {
@@ -254,7 +258,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         IServer server = serverRepo.create(name, address, socketPort);
         servers.add(server);
         serverListAdapter.notifyDataSetChanged();
-        Toast.makeText(this, "Server '" + server + "' added", Toast.LENGTH_SHORT).show();
+        String msg = getString(R.string.server_added);
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
     private void dataBaseSetUp() {
