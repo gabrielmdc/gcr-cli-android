@@ -10,8 +10,7 @@
     <string name="relay_dialog_hint_name">Name</string>
     <string name="relay_dialog_hint_gpio">Gpio</string>
     <string name="relay_dialog_hint_inverted">Inverted</string>
-    <string name="relay_dialog_hint_inverted_text">An inverted relay is a relay that when you turn
-        it on, then the state of the relay is the opposite (off)</string>
+    <string name="relay_dialog_hint_inverted_text">An inverted relay is a relay which state is the opposite of the indicated</string>
     <string name="relay_add">Add new relay</string>
     <string name="relay_edit">Edit relay</string>
 

@@ -1,52 +1,51 @@
 <resources>
     <!-- RELAY -->
-    <string name="relay_error_key_id">Invalid id</string>
-    <string name="relay_error_key_name">Invalid name</string>
-    <string name="relay_error_key_gpio">Invalid gpio</string>
+    <string name="relay_error_key_id">Ugyldigt id</string>
+    <string name="relay_error_key_name">Ugyldigt navn</string>
+    <string name="relay_error_key_gpio">Ugyldigt gpio</string>
 
     <string name="relayCap">Relay</string>
-    <string name="relayCap_name">Relay name</string>
+    <string name="relayCap_name">Relay navn</string>
 
-    <string name="relay_dialog_hint_name">Name</string>
+    <string name="relay_dialog_hint_name">Navn</string>
     <string name="relay_dialog_hint_gpio">Gpio</string>
-    <string name="relay_dialog_hint_inverted">Inverted</string>
-    <string name="relay_dialog_hint_inverted_text">An inverted relay is a relay that when you turn
-        it on, then the state of the relay is the opposite (off)</string>
-    <string name="relay_add">Add new relay</string>
-    <string name="relay_edit">Edit relay</string>
+    <string name="relay_dialog_hint_inverted">Inverteret</string>
+    <string name="relay_dialog_hint_inverted_text">"En inverteret relay er en relay hvis tilstand er den omvendte end den indikerede "</string>
+    <string name="relay_add">Tilføj ny relay</string>
+    <string name="relay_edit">Rediger relay</string>
 
     <!-- SERVER -->
-    <string name="server_error_key_id">Invalid id</string>
+    <string name="server_error_key_id">Ugyldigt id</string>
     <string name="server_error_key_name">Invalid name</string>
-    <string name="server_error_key_address">Invalid hostname address</string>
-    <string name="server_error_key_socket_port">Invalid socket port</string>
+    <string name="server_error_key_address">Ugyldigt hostnavn adresse</string>
+    <string name="server_error_key_socket_port">Ugyldigt socket port</string>
 
     <string name="serverCap">Server</string>
-    <string name="serverCap_name">Relay name</string>
+    <string name="serverCap_name">Relay navn</string>
 
-    <string name="server_dialog_hint_name">Name</string>
-    <string name="server_dialog_hint_address">Address</string>
-    <string name="server_dialog_hint_socket_port">Socket port: 10000 by default</string>
+    <string name="server_dialog_hint_name">Navn</string>
+    <string name="server_dialog_hint_address">Adresse</string>
+    <string name="server_dialog_hint_socket_port">Socket port: 10000 som standard</string>
 
-    <string name="server_added">Server added</string>
-    <string name="server_deleted">Server deleted</string>
-    <string name="server_modified">Server modified</string>
+    <string name="server_added">Server tilføjet</string>
+    <string name="server_deleted">Server slettet</string>
+    <string name="server_modified">Server redigeret</string>
 
-    <string name="server_add">Add new server</string>
-    <string name="server_edit">Edit server</string>
+    <string name="server_add">Tilføj ny server</string>
+    <string name="server_edit">Rediger server</string>
 
     <!-- GENERAL -->
     <string name="app_name">Relay Remote Control</string>
-    <string name="added">added</string>
-    <string name="deleted">deleted</string>
-    <string name="modified">modified</string>
-    <string name="options">Options</string>
+    <string name="added">tilføjet</string>
+    <string name="deleted">slettet</string>
+    <string name="modified">redigeret</string>
+    <string name="options">Muligheder</string>
 
-    <string name="add">Add</string>
-    <string name="delete">Delete</string>
-    <string name="edit">Edit</string>
-    <string name="invalid_data">Invalid data</string>
-    <string name="connected">Connected</string>
-    <string name="connection_refused">Connection refused</string>
-    <string name="connection_closed">Connection closed</string>
+    <string name="add">Tilføj</string>
+    <string name="delete">Slet</string>
+    <string name="edit">Rediger</string>
+    <string name="invalid_data">Ugyldigt data</string>
+    <string name="connected">Forbundet</string>
+    <string name="connection_refused">Forbindelse afvist</string>
+    <string name="connection_closed">Forbindelse lukket</string>
 </resources>
