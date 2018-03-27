@@ -1,4 +1,4 @@
-# <img alt="RRC" title="Relay Remote Control" src="./app/src/main/ic_launcher-web.png" width="100" height="100"> Relay Remote Control repository
+# <img alt="RRC" title="Relay Remote Control" src="./doc/app-inkscape-logo.png" width="100" height="100"> Relay Remote Control repository
 This app for android, allow you to turn ON/OFF a relay connected to a raspberry Pi by a Gpio port.
 
 ## Required
