@@ -36,4 +36,4 @@ android:
     - android-sdk-license-.+
     - google-gdk-license-.+
 script:
-- chmod +x ./gradlew
+  - chmod +x ./gradlew
