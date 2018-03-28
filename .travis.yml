@@ -1,0 +1,20 @@
+language: android
+jdk: oraclejdk8
+sudo: false
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    - $HOME/.android/build-cache
+env:
+  global:
+    - ANDROID_API_LEVEL=26
+    - EMULATOR_API_LEVEL=27
+    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
+android:
+  components:
+    - android-26
