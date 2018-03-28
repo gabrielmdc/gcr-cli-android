@@ -17,4 +17,24 @@ env:
     - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
 android:
   components:
-    - android-26
+    - tools
+    - platform-tools
+    - tools
+    # The BuildTools version used by your project
+    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+
+    # The SDK version used to compile your project
+    - android-$ANDROID_API_LEVEL
+    - extra-google-m2repository
+    - extra-android-m2repository # for design library
+    - sys-img-armeabi-v7a-android-tv-l
+    - add-on
+    - extra
+
+    # Specify at least one system image,
+    # if you need to run emulator(s) during your tests
+    #- sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL
+   licenses:
+    - android-sdk-preview-license-.+
+    - android-sdk-license-.+
+    - google-gdk-license-.+
