@@ -37,3 +37,4 @@ android:
     - google-gdk-license-.+
 script:
   - chmod +x ./gradlew
+  - ./gradlew test --info
