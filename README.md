@@ -6,9 +6,9 @@ Require the server side installed [Gpio Control Relay server](https://github.com
 
 There is a [plugin for Kodi](https://github.com/nearlg/script.service.relay) based on gcr-server.
 
-[![Master Build Status](https://travis-ci.org/nearlg/grc-cli-android.svg?branch=master)](https://travis-ci.org/nearlg/grc-cli-android)
+[![Master Build Status](https://travis-ci.org/nearlg/gcr-cli-android.svg?branch=master)](https://travis-ci.org/nearlg/gcr-cli-android)
 
-[![Next Build Status](https://travis-ci.org/nearlg/grc-cli-android.svg?branch=next)](https://travis-ci.org/nearlg/grc-cli-android)
+[![Next Build Status](https://travis-ci.org/nearlg/gcr-cli-android.svg?branch=next)](https://travis-ci.org/nearlg/gcr-cli-android)
 
 ## Instructions
 Download the apk and install it.
