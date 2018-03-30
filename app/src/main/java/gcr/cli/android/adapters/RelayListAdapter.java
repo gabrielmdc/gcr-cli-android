@@ -83,8 +83,7 @@ public class RelayListAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        int key = relays.keyAt(position);
-        return key;
+        return relays.keyAt(position);
     }
 
     private static class ViewHolder {

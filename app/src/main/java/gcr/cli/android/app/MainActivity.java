@@ -63,14 +63,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 showCreateServerDialog();
             }
         });
+
+        if(servers.size() == 0) {
+            showCreateServerDialog();
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-        Intent intent = new Intent(MainActivity.this, RelayActivity.class);
         IServer serverSelected = servers.get(position);
-        intent.putExtra("serverId", serverSelected.getId());
-        startActivity(intent);
+        openRelayList(serverSelected);
     }
 
     @Override
@@ -98,6 +100,16 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 return true;
         }
         return super.onContextItemSelected(item);
+    }
+
+    /**
+     * Connect to the server and open a new activity with a list of its relays
+     * @param server
+     */
+    private void openRelayList(IServer server) {
+        Intent intent = new Intent(MainActivity.this, RelayActivity.class);
+        intent.putExtra("serverId", server.getId());
+        startActivity(intent);
     }
 
     private void showEditServerDialog(final IServer server) {
@@ -141,6 +153,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setView(viewInflated);
         builder.setPositiveButton(getString(R.string.add), null);
         AlertDialog dialog = builder.create();
+        if(servers.size() == 0) {
+            dialog.setCanceledOnTouchOutside(false);
+        }
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
@@ -228,7 +243,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 addressErrorKey == null &&
                 socketPortErrorKey == null;
         if(isValidData) {
-            createNewServer(name, address, socketPort);
+            IServer server = createNewServer(name, address, socketPort);
+            openRelayList(server);
             return true;
         }
         String msg = getString(R.string.invalid_data);
@@ -251,15 +267,20 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         serverRepo.delete(server);
         String msg = getString(R.string.server_deleted);
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+        if(servers.size() == 0) {
+            showCreateServerDialog();
+        }
     }
 
-    private void createNewServer(String name, String address, int socketPort) {
+    private IServer createNewServer(String name, String address, int socketPort) {
         IServerRepository serverRepo = repositories.getServerRepository();
         IServer server = serverRepo.create(name, address, socketPort);
         servers.add(server);
         serverListAdapter.notifyDataSetChanged();
         String msg = getString(R.string.server_added);
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+        return server;
     }
 
     private void dataBaseSetUp() {
