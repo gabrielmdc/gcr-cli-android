@@ -1,5 +1,7 @@
 package gcr.cli.android;
 
+import android.content.Context;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -9,7 +11,6 @@ import gcr.cli.android.validatiors.RelayValidator;
 import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
 
 /**
  * Relay validator unit test
@@ -20,10 +21,12 @@ import static org.junit.Assert.assertNotEquals;
 public class RelayValidatorUnitTest {
 
     private RelayErrorKeys error;
+    @Mock
+    private Context context;
 
     @Test
     public void id() throws Exception {
-        RelayValidator validator = new RelayValidator();
+        RelayValidator validator = new RelayValidator(context);
         error = validator.validateId(1);
         assertEquals(null, error);
         error = validator.validateId(0);
@@ -34,7 +37,7 @@ public class RelayValidatorUnitTest {
 
     @Test
     public void name() throws Exception {
-        RelayValidator validator = new RelayValidator();
+        RelayValidator validator = new RelayValidator(context);
         error = validator.validateName("Relay name");
         assertEquals(null, error);
         error = validator.validateName("");
@@ -45,7 +48,7 @@ public class RelayValidatorUnitTest {
 
     @Test
     public void gpio() throws Exception {
-        RelayValidator validator = new RelayValidator();
+        RelayValidator validator = new RelayValidator(context);
         error = validator.validateGpio(1);
         assertEquals(null, error);
         error = validator.validateGpio(27);

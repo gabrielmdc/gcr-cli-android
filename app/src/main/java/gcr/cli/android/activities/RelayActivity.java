@@ -54,7 +54,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_relay);
 
         relays = new SparseArray<>();
-        relayValidator = new RelayValidator();
+        relayValidator = new RelayValidator(this);
 
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
@@ -248,7 +248,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
             relayNameEditText.setError(errorMsg);
         }
         if(gpioErrorKey != null) {
-            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);// TODO
             relayGpioEditText.setError(errorMsg);
         }
         boolean isValidData = nameErrorKey == null && gpioErrorKey == null;
@@ -278,7 +278,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
             relayNameEditText.setError(errorMsg);
         }
         if(gpioErrorKey != null) {
-            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);
+            String errorMsg = relayValidator.getErrorMessage(gpioErrorKey);
             relayGpioEditText.setError(errorMsg);
         }
         boolean isValidData = nameErrorKey == null && gpioErrorKey == null;

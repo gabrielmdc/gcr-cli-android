@@ -1,5 +1,7 @@
 package gcr.cli.android;
 
+import android.content.Context;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -20,10 +22,12 @@ import static org.junit.Assert.assertNotEquals;
 public class ServerValidatorUnitTest {
 
     private ServerErrorKeys error;
+    @Mock
+    private Context context;
 
     @Test
     public void id() throws Exception {
-        ServerValidator validator = new ServerValidator();
+        ServerValidator validator = new ServerValidator(context);
         error = validator.validateId(1);
         assertEquals(null, error);
         error = validator.validateId(0);
@@ -34,7 +38,7 @@ public class ServerValidatorUnitTest {
 
     @Test
     public void name() throws Exception {
-        ServerValidator validator = new ServerValidator();
+        ServerValidator validator = new ServerValidator(context);
         error = validator.validateName("Server name");
         assertEquals(null, error);
         error = validator.validateName("");
@@ -45,7 +49,7 @@ public class ServerValidatorUnitTest {
 
     @Test
     public void address() throws Exception {
-        ServerValidator validator = new ServerValidator();
+        ServerValidator validator = new ServerValidator(context);
         error = validator.validateAddress("0.0.0.0");
         assertEquals(null, error);
         error = validator.validateAddress("address");
@@ -61,7 +65,7 @@ public class ServerValidatorUnitTest {
 
     @Test
     public void socketPort() throws Exception {
-        ServerValidator validator = new ServerValidator();
+        ServerValidator validator = new ServerValidator(context);
         error = validator.validateSocketPort(0);
         assertEquals(null, error);
         error = validator.validateSocketPort(65535);

@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        serverValidator = new ServerValidator();
+        serverValidator = new ServerValidator(this);
         setContentView(R.layout.activity_main);
 
         // Get servers from data base

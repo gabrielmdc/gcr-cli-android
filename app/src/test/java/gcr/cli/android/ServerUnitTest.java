@@ -1,5 +1,7 @@
 package gcr.cli.android;
 
+import android.content.Context;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,9 +24,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class ServerUnitTest {
 
+    @Mock
+    private Context context;
+
     @Test
     public void all() throws Exception {
-        ServerValidator validator = new ServerValidator();
+        ServerValidator validator = new ServerValidator(context);
         IServer server = new Server(1, "server name", "0.0.0.0", 0);
         List<ServerErrorKeys> errors = validator.validate(server);
         assertEquals(0, errors.size());

@@ -1,5 +1,6 @@
 package gcr.cli.android.validatiors;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
@@ -12,6 +13,10 @@ import gcr.cli.android.validatiors.errorkeys.RelayErrorKeys;
 public class RelayValidator extends ModelValidator<IRelay, RelayErrorKeys> {
 
     public static final int ERROR_KEY_ID = 0;
+
+    public RelayValidator(Context context) {
+        this.context = context;
+    }
 
     public RelayErrorKeys validateId(int id) {
         final String regex = "^[1-9]+[0-9]*$";
@@ -57,11 +62,11 @@ public class RelayValidator extends ModelValidator<IRelay, RelayErrorKeys> {
     public String getErrorMessage(RelayErrorKeys key) {
         switch(key) {
             case ID:
-                return Resources.getSystem().getString(R.string.relay_error_key_id);
+                return context.getResources().getString(R.string.relay_error_key_id);
             case NAME:
-                return Resources.getSystem().getString(R.string.relay_error_key_name);
+                return context.getResources().getString(R.string.relay_error_key_name);
             case GPIO:
-                return Resources.getSystem().getString(R.string.relay_error_key_gpio);
+                return context.getResources().getString(R.string.relay_error_key_gpio);
         }
         return null;
     }
