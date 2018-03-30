@@ -1,5 +1,7 @@
 package gcr.cli.android;
 
+import android.content.Context;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -22,9 +24,12 @@ import static org.junit.Assert.assertEquals;
 @RunWith(MockitoJUnitRunner.class)
 public class RelayUnitTest {
 
+    @Mock
+    private Context context;
+
     @Test
     public void all() throws Exception {
-        RelayValidator validator = new RelayValidator();
+        RelayValidator validator = new RelayValidator(context);
         IRelay relay = new Relay(1, "relay name", 2, false, false, false);
         List<RelayErrorKeys> errors = validator.validate(relay);
         assertEquals(0, errors.size());
