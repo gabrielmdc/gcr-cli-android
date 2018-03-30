@@ -1,5 +1,6 @@
 package gcr.cli.android.validatiors;
 
+import android.content.Context;
 import android.content.res.Resources;
 
 import java.util.ArrayList;
@@ -10,6 +11,10 @@ import gcr.cli.android.models.IServer;
 import gcr.cli.android.validatiors.errorkeys.ServerErrorKeys;
 
 public class ServerValidator extends ModelValidator<IServer, ServerErrorKeys> {
+
+    public ServerValidator(Context context) {
+        this.context = context;
+    }
 
     public ServerErrorKeys validateId(int id) {
         final String regex = "^[1-9][0-9]*$";
@@ -65,13 +70,13 @@ public class ServerValidator extends ModelValidator<IServer, ServerErrorKeys> {
     public String getErrorMessage(ServerErrorKeys key) {
         switch(key) {
             case ID:
-                return Resources.getSystem().getString(R.string.server_error_key_id);
+                return context.getResources().getString(R.string.server_error_key_id);
             case NAME:
-                return Resources.getSystem().getString(R.string.server_error_key_name);
+                return context.getResources().getString(R.string.server_error_key_name);
             case ADDRESS:
-                return Resources.getSystem().getString(R.string.server_error_key_address);
+                return context.getResources().getString(R.string.server_error_key_address);
             case SOCKET_PORT:
-                return Resources.getSystem().getString(R.string.server_error_key_socket_port);
+                return context.getResources().getString(R.string.server_error_key_socket_port);
         }
         return null;
     }

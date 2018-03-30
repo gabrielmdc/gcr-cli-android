@@ -54,7 +54,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
         setContentView(R.layout.activity_relay);
 
         relays = new SparseArray<>();
-        relayValidator = new RelayValidator();
+        relayValidator = new RelayValidator(this);
 
         Toolbar relaysToolbar = findViewById(R.id.relays_toolbar);
         setSupportActionBar(relaysToolbar);
