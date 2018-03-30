@@ -145,6 +145,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         builder.setView(viewInflated);
         builder.setPositiveButton(getString(R.string.add), null);
         AlertDialog dialog = builder.create();
+        if(servers.size() == 0) {
+            dialog.setCanceledOnTouchOutside(false);
+        }
         final EditText serverNameEditText = viewInflated.findViewById(R.id.serverNameEditText);
         final EditText serverAddressEditText = viewInflated.findViewById(R.id.serverAddressEditText);
         final EditText socketPortEditText = viewInflated.findViewById(R.id.socketPortEditText);
