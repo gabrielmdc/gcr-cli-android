@@ -330,6 +330,9 @@ public class RelayActivity extends AppCompatActivity implements Observer {
                 }
                 relays.put(key, relayFromReceiver);
             }
+            if(relays.size() == 0) {
+                showCreateRelayDialog();
+            }
             relayListAdapter.notifyDataSetChanged();
         }
     }

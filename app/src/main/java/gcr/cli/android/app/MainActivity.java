@@ -63,6 +63,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 showCreateServerDialog();
             }
         });
+
+        if(servers.size() == 0) {
+            showCreateServerDialog();
+        }
     }
 
     @Override
@@ -251,6 +255,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         serverRepo.delete(server);
         String msg = getString(R.string.server_deleted);
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+
+        if(servers.size() == 0) {
+            showCreateServerDialog();
+        }
     }
 
     private void createNewServer(String name, String address, int socketPort) {
