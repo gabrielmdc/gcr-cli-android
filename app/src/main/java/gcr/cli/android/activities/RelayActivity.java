@@ -248,7 +248,7 @@ public class RelayActivity extends AppCompatActivity implements Observer {
             relayNameEditText.setError(errorMsg);
         }
         if(gpioErrorKey != null) {
-            String errorMsg = relayValidator.getErrorMessage(nameErrorKey);// TODO
+            String errorMsg = relayValidator.getErrorMessage(gpioErrorKey);// TODO
             relayGpioEditText.setError(errorMsg);
         }
         boolean isValidData = nameErrorKey == null && gpioErrorKey == null;
