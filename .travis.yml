@@ -2,39 +2,50 @@ language: android
 jdk: oraclejdk8
 sudo: false
 before_cache:
-  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+- rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+- rm -fr $HOME/.gradle/caches/*/plugin-resolution/
 cache:
   directories:
-    - $HOME/.gradle/caches/
-    - $HOME/.gradle/wrapper/
-    - $HOME/.android/build-cache
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+  - "$HOME/.android/build-cache"
 env:
   global:
-    - ANDROID_API_LEVEL=26
-    - EMULATOR_API_LEVEL=27
-    - ANDROID_BUILD_TOOLS_VERSION=27.0.3
-    - ADB_INSTALL_TIMEOUT=20 # minutes (2 minutes by default)
+  - ANDROID_API_LEVEL=26
+  - EMULATOR_API_LEVEL=27
+  - ANDROID_BUILD_TOOLS_VERSION=27.0.3
+  - ADB_INSTALL_TIMEOUT=20
+  - secure: "J/0jjWDpYwLDtpi/dMDnyg19RH+mmzCHEOg9d44bGDeYQOnXYxe/vpMtaRvJ/XjO7K+yGK4ceXSqXOdKavhXVTpTIdYvJWb5lKE/7grW7HOHQePdMW9PcY1FQ2Mk9uj4OKPqrr59hf9XkqzgCAYSbyzCfx3bxMZfFCMlcRe5D2ougpnPTsG9WAFxHeBqcPmVF4b2eSRdQwbueozsDn+L6mOR2QhvvB68t02PQJ9vxor/4kWOhgZYDeNAtan5wbp28NiL5XdEObyo/ZnSx9A4U1O9VaHmK6nv9amzKoAMOMuuIvQoKQQXTWJYwAfwcbCWOCDaUfsG3XbCY+pwapdTgKdp03+Ygq/AtiP69KhIjAZCwlnlKAH1pitAypAZZybd7ftUBuuGnSJjBTRak3GZWmjo/WA4LRJg/uSOVphnRlcFiYdwmYZtFfvoEjgiw/dhFPt1vPJqwueaZ8S+QZ2w49CV2UlHFcts1n9eBLozyKaprgSuwSqEMID8O4+7N5UrOWGx8E3qmwA0iHDGOJUzAqMaKx8NbH6Ws97CWAfDVNmUsuQWbPtb4LZx9jr4S9Z4wOEout3QFIGcbx/8w1+WYZQ2axVgtQB8TYggd9pwtxioKEqo9AUclsb7RvuZZbIwuWNEP3400IawsI92/L+TR21iV+jBZAbQKm0izslmQkc="
+  - secure: "A42A8qG+T3U9ZldZkcr+b4fwC2jUpzijNiRm4VH2K4ZlWRTSLyGzYocZBuO+6bhW6dWH6qSRHnfO+ddu9ucyqInZEtabQsQFd+a7QODvps17YrXbyqo6GrpYoQVO9YFo35eruNWVA42s9YsWuxboHdDZPTfRikOUzTdRsSJ3dWL4Hq6EUClh0rDLGnJ/X4f9UPbBH2c9IWWH1SvcQb9Pz1H7fKCMFBdEJPq6us2IdW4TVNL+xOd+Wjg7xuAwRFUTgAVO/xB/J15yumI5mWK0wdj+M/oQfdSTAasqq2ZeXQ3nN5sMzq53vCYXKsBkuoz2jQI+qMjlvHpCLn3nWGbQBJRkktgYJf828DukmtpiL5XRDHTIX1vp2h4ren/4F4WgdJxz6i1oe1laT6ruhkG2MQU0YS9MI/mBLsvHPBY/n+M/LPDpYYnLw856RUO2JYRt61YbkmwEi0UT/8Cu51mp+teX5uN4K5738Yn3wf/EpryiFemVM+6Yz3y/GCRiVQXq4LXHG1UOKKKCo/kjqyuEwjznlwrXKU6zploWUyw/hwDXLJL98BO5P5kHgBPDigBPYxRdekd2xNhSIO9u/s6I9iLhg0XYQmgxMh5QayxZKp35nW5bLbm7j4o9D6wwZuAePdESAG0gWFM5SsLZsLzc+YpQbBW+PiKNt3ib35bucLs="
 android:
   components:
-    # Update Android SDK Tools
-    - tools
-    # The BuildTools version used by your project
-    - build-tools-$ANDROID_BUILD_TOOLS_VERSION
-
-    # The SDK version used to compile your project
-    - android-$ANDROID_API_LEVEL
-    # Support library
-    - extra-android-support
-    - extra-android-m2repository
-
-    # Specify at least one system image,
-    # if you need to run emulator(s) during your tests
-    #- sys-img-armeabi-v7a-android-$ANDROID_API_LEVEL
+  - tools
+  - build-tools-$ANDROID_BUILD_TOOLS_VERSION
+  - android-$ANDROID_API_LEVEL
+  - extra-android-support
+  - extra-android-m2repository
   licenses:
-    - android-sdk-preview-license-.+
-    - android-sdk-license-.+
-    - google-gdk-license-.+
+  - android-sdk-preview-license-.+
+  - android-sdk-license-.+
+  - google-gdk-license-.+
 script:
-  - chmod +x ./gradlew
-  - ./gradlew test --stacktrace
+- chmod +x ./gradlew
+- "./gradlew test --stacktrace"
+before_install:
+- openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
+  -in keystore.enc -out androidNearlgKey.jks -d
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure: IKTM6C6hfVXyWoiAnJv3L1ytBslthMkxjnOjgoKTtH6AHbZ/UxrG0QGRPJ3aNtRboiv1kFz/YTFy3woyn4oLQDRZm/K1Sn6FnE7uS0OPbY2r8tzCPN/2myl8MimJJpL/rhssiSp9jRsgVwLvQbVxz6M8oZQT8+iUtreuCMucLOKBsCF/hJLAvpjN03DNdKNxpuw/fDDOtxOxFbByNN52ROz4KFrPcpQBMc56TNcQpVy1EgtKmb8zREX39RxnAYPQc/MECsIrwSVnCEksXpEeUvSX1n82jzZtd/Xk/vI6a+t1wymlOYPYKxgaET+HhHrjr/stDYBlqpgyly/zfrqgXqKmRl6FRGZ4RuPr3z5sdmQ87gxsGEE+RTrOJBt4tvy9wEv2xlBip0whzSYfnANQE3NBgUfct3RenpcK6B/nAL0Lvh38EC4PqwjsqMgC5NBmW1cM0RhoqAAedR1Ip6gZqwykAw4h5jWRZOMnvYTlL1GRN9KSwc+XHxA5AQn+q826IwAX31N/cWj4SqjNzmJnlTJpmRGKKCYHfA1qsvNBUpShaSSemTyNh/DZ2QgyF3MuebaPvMBbFqAdOq/V06AUS/CTj0v/AnBR4dUrxaNxSnrPxjIKvfHP2C8m5rq3n8BvSU0hDq4Jognz5X6T+2757kClVMwdkj87PScdyKEbvUA=
+  file: gcr-cli-android-release.apk
+  on:
+    repo: nearlg/gcr-cli-android
+before_deploy:
+- cp $TRAVIS_BUILD_DIR/.keystore.enc $HOME
+- cd app/build/outputs/apk/
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
+# Verification
+- jarsigner -verify app-release-unsigned.apk
+- "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}/zipalign -v 4 app-release-unsigned.apk gcr-cli-android-release.apk"
