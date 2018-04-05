@@ -39,7 +39,7 @@ before_deploy:
 - git config --local user.name "nearlg"
 - git config --local user.email "nearlg@gmail.com"
 - git tag -a v2.0.0 -m "Version 2.0.0" # Must be modified for every merge to master branch
-- cp $TRAVIS_BUILD_DIR/.keystore.enc $HOME
+- cp $TRAVIS_BUILD_DIR/keystore.enc $HOME
 - cd app/build/outputs/apk/
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 # Verification
