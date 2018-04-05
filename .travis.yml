@@ -15,8 +15,8 @@ env:
   - EMULATOR_API_LEVEL=27
   - ANDROID_BUILD_TOOLS_VERSION=27.0.3
   - ADB_INSTALL_TIMEOUT=20
-  - secure: "J/0jjWDpYwLDtpi/dMDnyg19RH+mmzCHEOg9d44bGDeYQOnXYxe/vpMtaRvJ/XjO7K+yGK4ceXSqXOdKavhXVTpTIdYvJWb5lKE/7grW7HOHQePdMW9PcY1FQ2Mk9uj4OKPqrr59hf9XkqzgCAYSbyzCfx3bxMZfFCMlcRe5D2ougpnPTsG9WAFxHeBqcPmVF4b2eSRdQwbueozsDn+L6mOR2QhvvB68t02PQJ9vxor/4kWOhgZYDeNAtan5wbp28NiL5XdEObyo/ZnSx9A4U1O9VaHmK6nv9amzKoAMOMuuIvQoKQQXTWJYwAfwcbCWOCDaUfsG3XbCY+pwapdTgKdp03+Ygq/AtiP69KhIjAZCwlnlKAH1pitAypAZZybd7ftUBuuGnSJjBTRak3GZWmjo/WA4LRJg/uSOVphnRlcFiYdwmYZtFfvoEjgiw/dhFPt1vPJqwueaZ8S+QZ2w49CV2UlHFcts1n9eBLozyKaprgSuwSqEMID8O4+7N5UrOWGx8E3qmwA0iHDGOJUzAqMaKx8NbH6Ws97CWAfDVNmUsuQWbPtb4LZx9jr4S9Z4wOEout3QFIGcbx/8w1+WYZQ2axVgtQB8TYggd9pwtxioKEqo9AUclsb7RvuZZbIwuWNEP3400IawsI92/L+TR21iV+jBZAbQKm0izslmQkc="
-  - secure: "A42A8qG+T3U9ZldZkcr+b4fwC2jUpzijNiRm4VH2K4ZlWRTSLyGzYocZBuO+6bhW6dWH6qSRHnfO+ddu9ucyqInZEtabQsQFd+a7QODvps17YrXbyqo6GrpYoQVO9YFo35eruNWVA42s9YsWuxboHdDZPTfRikOUzTdRsSJ3dWL4Hq6EUClh0rDLGnJ/X4f9UPbBH2c9IWWH1SvcQb9Pz1H7fKCMFBdEJPq6us2IdW4TVNL+xOd+Wjg7xuAwRFUTgAVO/xB/J15yumI5mWK0wdj+M/oQfdSTAasqq2ZeXQ3nN5sMzq53vCYXKsBkuoz2jQI+qMjlvHpCLn3nWGbQBJRkktgYJf828DukmtpiL5XRDHTIX1vp2h4ren/4F4WgdJxz6i1oe1laT6ruhkG2MQU0YS9MI/mBLsvHPBY/n+M/LPDpYYnLw856RUO2JYRt61YbkmwEi0UT/8Cu51mp+teX5uN4K5738Yn3wf/EpryiFemVM+6Yz3y/GCRiVQXq4LXHG1UOKKKCo/kjqyuEwjznlwrXKU6zploWUyw/hwDXLJL98BO5P5kHgBPDigBPYxRdekd2xNhSIO9u/s6I9iLhg0XYQmgxMh5QayxZKp35nW5bLbm7j4o9D6wwZuAePdESAG0gWFM5SsLZsLzc+YpQbBW+PiKNt3ib35bucLs="
+  - secure: J/0jjWDpYwLDtpi/dMDnyg19RH+mmzCHEOg9d44bGDeYQOnXYxe/vpMtaRvJ/XjO7K+yGK4ceXSqXOdKavhXVTpTIdYvJWb5lKE/7grW7HOHQePdMW9PcY1FQ2Mk9uj4OKPqrr59hf9XkqzgCAYSbyzCfx3bxMZfFCMlcRe5D2ougpnPTsG9WAFxHeBqcPmVF4b2eSRdQwbueozsDn+L6mOR2QhvvB68t02PQJ9vxor/4kWOhgZYDeNAtan5wbp28NiL5XdEObyo/ZnSx9A4U1O9VaHmK6nv9amzKoAMOMuuIvQoKQQXTWJYwAfwcbCWOCDaUfsG3XbCY+pwapdTgKdp03+Ygq/AtiP69KhIjAZCwlnlKAH1pitAypAZZybd7ftUBuuGnSJjBTRak3GZWmjo/WA4LRJg/uSOVphnRlcFiYdwmYZtFfvoEjgiw/dhFPt1vPJqwueaZ8S+QZ2w49CV2UlHFcts1n9eBLozyKaprgSuwSqEMID8O4+7N5UrOWGx8E3qmwA0iHDGOJUzAqMaKx8NbH6Ws97CWAfDVNmUsuQWbPtb4LZx9jr4S9Z4wOEout3QFIGcbx/8w1+WYZQ2axVgtQB8TYggd9pwtxioKEqo9AUclsb7RvuZZbIwuWNEP3400IawsI92/L+TR21iV+jBZAbQKm0izslmQkc=
+  - secure: A42A8qG+T3U9ZldZkcr+b4fwC2jUpzijNiRm4VH2K4ZlWRTSLyGzYocZBuO+6bhW6dWH6qSRHnfO+ddu9ucyqInZEtabQsQFd+a7QODvps17YrXbyqo6GrpYoQVO9YFo35eruNWVA42s9YsWuxboHdDZPTfRikOUzTdRsSJ3dWL4Hq6EUClh0rDLGnJ/X4f9UPbBH2c9IWWH1SvcQb9Pz1H7fKCMFBdEJPq6us2IdW4TVNL+xOd+Wjg7xuAwRFUTgAVO/xB/J15yumI5mWK0wdj+M/oQfdSTAasqq2ZeXQ3nN5sMzq53vCYXKsBkuoz2jQI+qMjlvHpCLn3nWGbQBJRkktgYJf828DukmtpiL5XRDHTIX1vp2h4ren/4F4WgdJxz6i1oe1laT6ruhkG2MQU0YS9MI/mBLsvHPBY/n+M/LPDpYYnLw856RUO2JYRt61YbkmwEi0UT/8Cu51mp+teX5uN4K5738Yn3wf/EpryiFemVM+6Yz3y/GCRiVQXq4LXHG1UOKKKCo/kjqyuEwjznlwrXKU6zploWUyw/hwDXLJL98BO5P5kHgBPDigBPYxRdekd2xNhSIO9u/s6I9iLhg0XYQmgxMh5QayxZKp35nW5bLbm7j4o9D6wwZuAePdESAG0gWFM5SsLZsLzc+YpQbBW+PiKNt3ib35bucLs=
 android:
   components:
   - tools
@@ -39,17 +39,17 @@ deploy:
 script:
 - chmod +x ./gradlew
 - "./gradlew test --stacktrace"
-before_install:
-- openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
-  -in keystore.enc -out androidNearlgKey.jks -d
 before_deploy:
-# Set up git user name and tag this commit
 - git config --local user.name "nearlg"
 - git config --local user.email "nearlg@gmail.com"
-- git tag -a v2.0.0 -m "Version 2.0.0" # Must be modified for every merge to master branch
-- cp $TRAVIS_BUILD_DIR/keystore.enc $HOME
+- git tag -a v2.0.0 -m "Version 2.0.0"
+- cp $TRAVIS_BUILD_DIR/keystore.jks $HOME
 - cd app/build/outputs/apk/
-- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
-# Verification
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks
+  -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 - jarsigner -verify app-release-unsigned.apk
-- "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}/zipalign -v 4 app-release-unsigned.apk gcr-cli-android-release.apk"
+- "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}/zipalign -v 4 app-release-unsigned.apk
+  gcr-cli-android-release.apk"
+before_install:
+- openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
+  -in keystore.jks.enc -out keystore.jks -d
