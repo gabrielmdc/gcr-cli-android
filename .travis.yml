@@ -43,7 +43,7 @@ deploy:
   on:
     repo: nearlg/gcr-cli-android
 before_deploy:
-- cp $TRAVIS_BUILD_DIR/.keystore $HOME
+- cp $TRAVIS_BUILD_DIR/.keystore.enc $HOME
 - cd app/build/outputs/apk/
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 # Verification
