@@ -29,7 +29,7 @@ android:
   - android-sdk-license-.+
   - google-gdk-license-.+
 before_install:
-- openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
+- openssl aes-256-cbc -K "$encrypted_8fb5c5130ba6_key" -iv "$encrypted_8fb5c5130ba6_iv"
   -in keystore.jks.enc -out keystore.jks -d
 script:
 - chmod +x ./gradlew
