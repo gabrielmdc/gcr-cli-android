@@ -34,16 +34,12 @@ script:
 before_install:
 - openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
   -in keystore.enc -out androidNearlgKey.jks -d
-deploy:
-  provider: releases
-  skip_cleanup: true
-  api_key:
-    secure: IKTM6C6hfVXyWoiAnJv3L1ytBslthMkxjnOjgoKTtH6AHbZ/UxrG0QGRPJ3aNtRboiv1kFz/YTFy3woyn4oLQDRZm/K1Sn6FnE7uS0OPbY2r8tzCPN/2myl8MimJJpL/rhssiSp9jRsgVwLvQbVxz6M8oZQT8+iUtreuCMucLOKBsCF/hJLAvpjN03DNdKNxpuw/fDDOtxOxFbByNN52ROz4KFrPcpQBMc56TNcQpVy1EgtKmb8zREX39RxnAYPQc/MECsIrwSVnCEksXpEeUvSX1n82jzZtd/Xk/vI6a+t1wymlOYPYKxgaET+HhHrjr/stDYBlqpgyly/zfrqgXqKmRl6FRGZ4RuPr3z5sdmQ87gxsGEE+RTrOJBt4tvy9wEv2xlBip0whzSYfnANQE3NBgUfct3RenpcK6B/nAL0Lvh38EC4PqwjsqMgC5NBmW1cM0RhoqAAedR1Ip6gZqwykAw4h5jWRZOMnvYTlL1GRN9KSwc+XHxA5AQn+q826IwAX31N/cWj4SqjNzmJnlTJpmRGKKCYHfA1qsvNBUpShaSSemTyNh/DZ2QgyF3MuebaPvMBbFqAdOq/V06AUS/CTj0v/AnBR4dUrxaNxSnrPxjIKvfHP2C8m5rq3n8BvSU0hDq4Jognz5X6T+2757kClVMwdkj87PScdyKEbvUA=
-  file: gcr-cli-android-release.apk
-  on:
-    repo: nearlg/gcr-cli-android
 before_deploy:
-- cp $TRAVIS_BUILD_DIR/.keystore.enc $HOME
+# Set up git user name and tag this commit
+- git config --local user.name "nearlg"
+- git config --local user.email "nearlg@gmail.com"
+- git tag -a v2.0.0 -m "Version 2.0.0" # Must be modified for every merge to master branch
+- cp $TRAVIS_BUILD_DIR/keystore.enc $HOME
 - cd app/build/outputs/apk/
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 # Verification
