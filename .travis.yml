@@ -52,4 +52,4 @@ before_deploy:
   gcr-cli-android-release.apk"
 before_install:
 - openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
-  -in keystore.jks.copy.enc.copy -out keystore.jks.copy -d
+  -in keystore.jks.copy.enc -out keystore.jks -d
