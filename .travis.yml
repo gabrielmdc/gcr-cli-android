@@ -38,9 +38,9 @@ before_deploy:
 - git config --local user.name "nearlg"
 - git config --local user.email "nearlg@gmail.com"
 - git tag -a v2.0.0 -m "Version 2.0.0"
-- cp $TRAVIS_BUILD_DIR/keystore.jks.copy $HOME
+- cp $TRAVIS_BUILD_DIR/keystore.jks $HOME
 - cd app/build/outputs/apk/
-- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks.copy
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks
   -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 - jarsigner -verify app-release-unsigned.apk
 - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}/zipalign -v 4 app-release-unsigned.apk
