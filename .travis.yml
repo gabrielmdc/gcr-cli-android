@@ -15,8 +15,8 @@ env:
   - EMULATOR_API_LEVEL=27
   - ANDROID_BUILD_TOOLS_VERSION=27.0.3
   - ADB_INSTALL_TIMEOUT=20
-  - secure: J/0jjWDpYwLDtpi/dMDnyg19RH+mmzCHEOg9d44bGDeYQOnXYxe/vpMtaRvJ/XjO7K+yGK4ceXSqXOdKavhXVTpTIdYvJWb5lKE/7grW7HOHQePdMW9PcY1FQ2Mk9uj4OKPqrr59hf9XkqzgCAYSbyzCfx3bxMZfFCMlcRe5D2ougpnPTsG9WAFxHeBqcPmVF4b2eSRdQwbueozsDn+L6mOR2QhvvB68t02PQJ9vxor/4kWOhgZYDeNAtan5wbp28NiL5XdEObyo/ZnSx9A4U1O9VaHmK6nv9amzKoAMOMuuIvQoKQQXTWJYwAfwcbCWOCDaUfsG3XbCY+pwapdTgKdp03+Ygq/AtiP69KhIjAZCwlnlKAH1pitAypAZZybd7ftUBuuGnSJjBTRak3GZWmjo/WA4LRJg/uSOVphnRlcFiYdwmYZtFfvoEjgiw/dhFPt1vPJqwueaZ8S+QZ2w49CV2UlHFcts1n9eBLozyKaprgSuwSqEMID8O4+7N5UrOWGx8E3qmwA0iHDGOJUzAqMaKx8NbH6Ws97CWAfDVNmUsuQWbPtb4LZx9jr4S9Z4wOEout3QFIGcbx/8w1+WYZQ2axVgtQB8TYggd9pwtxioKEqo9AUclsb7RvuZZbIwuWNEP3400IawsI92/L+TR21iV+jBZAbQKm0izslmQkc=
-  - secure: A42A8qG+T3U9ZldZkcr+b4fwC2jUpzijNiRm4VH2K4ZlWRTSLyGzYocZBuO+6bhW6dWH6qSRHnfO+ddu9ucyqInZEtabQsQFd+a7QODvps17YrXbyqo6GrpYoQVO9YFo35eruNWVA42s9YsWuxboHdDZPTfRikOUzTdRsSJ3dWL4Hq6EUClh0rDLGnJ/X4f9UPbBH2c9IWWH1SvcQb9Pz1H7fKCMFBdEJPq6us2IdW4TVNL+xOd+Wjg7xuAwRFUTgAVO/xB/J15yumI5mWK0wdj+M/oQfdSTAasqq2ZeXQ3nN5sMzq53vCYXKsBkuoz2jQI+qMjlvHpCLn3nWGbQBJRkktgYJf828DukmtpiL5XRDHTIX1vp2h4ren/4F4WgdJxz6i1oe1laT6ruhkG2MQU0YS9MI/mBLsvHPBY/n+M/LPDpYYnLw856RUO2JYRt61YbkmwEi0UT/8Cu51mp+teX5uN4K5738Yn3wf/EpryiFemVM+6Yz3y/GCRiVQXq4LXHG1UOKKKCo/kjqyuEwjznlwrXKU6zploWUyw/hwDXLJL98BO5P5kHgBPDigBPYxRdekd2xNhSIO9u/s6I9iLhg0XYQmgxMh5QayxZKp35nW5bLbm7j4o9D6wwZuAePdESAG0gWFM5SsLZsLzc+YpQbBW+PiKNt3ib35bucLs=
+  - secure: d9/uKs1j5prYQd4OlheainKmS/iHmFtYlEFooZqk2mjJFHrxFcLOo3BeprhpgT7INide9RcnE/3JQqUYpgZnLFHlSN2PoZpDLEkvE9OR3wA6u7NiD/H2+W4VplJNlK0V5pTUzuGVRGE7k580NGLpy+/Aj6G52YWtTnwyN6NmXjWg3bE82pokxLkGDasIkztykqhDRXhP+ALpXOSt7jcpiQcL5/LOt54qes9s3mDDarQgEsPSpcK7Bsbn0pDpH6mNKIF779caT26SugxKyhbtHlLvhvEfSGrehA9DCtNbIO46yn6cRKOwmoleIypBbMkKPjXHPY7nybb/5aGTKe+zPJ4Cgnp3MLY8N88AcmhO124HJu9cro/OaCzoKD0k7c+iy7dn3na64piZgNNn8TJ6LHNpHTqnyu9M9JqxN+6GZ7EgzfcDQSTEYRERSuILm5uczNw8TAmJkEkx4oUc8xPtS/1nhAF9XoCpbmR3CkHRPJ4+yD973V2xFH0Z+GsBlybz1LKCGwunt790njRVs5fjo+Nr05WWD4NLUNfa9hnZ68GqNHykIfuSfRXWHx7j26q28sav/yT1n7dIBxiYRF8T7TvlyzkJx79o9masV3DJjo+CvalZkzMFsGbhqqqdtQJ5COEMh8Y3MHEm6GwiePIVdlz7BDNeo6piGGpic+eQTBo=
+  - secure: gyMJo9JQKTuVZYUgdi7w2P1uqtw+Z3aenR9OD6V5YQ88tLfUgL5ZGw5z4Jz3YJTYgctJRiAa7kdPc7rzLptw6RZvQwgheuUdlMqoh1oy08Jz5i0l3QssHUeCkPcLE6/NixJ0mUV+SshSe8CBJke09NovGlRg9IQGq3TVL4bxVWmNMwvcNAt8JxjWxu/KmfOC3yD6OAF1mbCLAfb4mfiejxT/hBLve2v9RMiiVncUjCOndAKbMO02kTPtquWIr6Qonh4IsnvxIbneVTED3/G3IkYWGDXlWC/LCAQ71YeL5/6WiRHklWKNIYEFJ/HvhS0wfxtzsxsVt3i0RSvhABRHovEPfJ0Pjq9HRvjc82jFnI5Jua2ptcGhC/xevD8UN8SoWp2qVQ3XsCMunZ+/Mj2HC9icpsbsZtQR7nsfCViaww8tK6ldqpHA8Xh8v2UffpLgdK+YSFb22XUnYTdPHe/yLnUp5OrWNqsnjEHkm4iLVbg9FY+LPPOUftb/UBFqN1TyFCzPQry5N3c128DbGl4OdDCt/LGZyXrzGBCIZzf2dsJB4qYtOc22hC7FRN7Hxy9XTUsgxDAMT0LllfxvY8xLKa9JPNHILL7E15ApMGWZJZMWkUEL4sKHQU8hPFYYNHEnO+g3s+F/BWMSJGLtodYFWaNWIRjy1yOiVNWdAep0mec=
 android:
   components:
   - tools
@@ -43,13 +43,13 @@ before_deploy:
 - git config --local user.name "nearlg"
 - git config --local user.email "nearlg@gmail.com"
 - git tag -a v2.0.0 -m "Version 2.0.0"
-- cp $TRAVIS_BUILD_DIR/keystore.jks $HOME
+- cp $TRAVIS_BUILD_DIR/keystore.jks.copy $HOME
 - cd app/build/outputs/apk/
-- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks.copy
   -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 - jarsigner -verify app-release-unsigned.apk
 - "${ANDROID_HOME}/build-tools/${ANDROID_BUILD_TOOLS_VERSION}/zipalign -v 4 app-release-unsigned.apk
   gcr-cli-android-release.apk"
 before_install:
 - openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
-  -in keystore.jks.enc -out keystore.jks -d
+  -in keystore.jks.copy.enc.copy -out keystore.jks.copy -d
