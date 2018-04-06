@@ -30,7 +30,7 @@ android:
   - google-gdk-license-.+
 script:
 - chmod +x ./gradlew
-- "./gradlew test --stacktrace"
+- "./gradlew clean build test --stacktrace"
 before_deploy:
 - git config --local user.name "nearlg"
 - git config --local user.email "nearlg@gmail.com"
