@@ -37,6 +37,7 @@ before_deploy:
 - git tag -a v2.0.1 -m "Version 2.0.1"
 - cp $TRAVIS_BUILD_DIR/keystore.jks $HOME
 - cd app/release/
+- ls
 - jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/keystore.jks
   -storepass $storepass -keypass $keypass app-release-unsigned.apk nearlg
 - jarsigner -verify app-release-unsigned.apk
