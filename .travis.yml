@@ -54,5 +54,3 @@ before_install:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv -in keystore.jks.enc -out keystore.jks -d
   fi
-- openssl aes-256-cbc -k "$encrypted_8fb5c5130ba6_key"
-
