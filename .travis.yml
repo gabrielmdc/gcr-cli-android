@@ -52,7 +52,6 @@ deploy:
   file: app/build/outputs/apk/gcr-cli-android-release.apk
   on:
     repo: nearlg/gcr-cli-android
-    tags: true
 before_install:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
