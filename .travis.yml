@@ -32,9 +32,6 @@ script:
 - chmod +x ./gradlew
 - "./gradlew clean build test --stacktrace"
 before_deploy:
-- git config --local user.name "nearlg"
-- git config --local user.email "nearlg@gmail.com"
-- git tag -a v2.0.2t -m "Version 2.0.2 testing"
 - cp $TRAVIS_BUILD_DIR/keystore.jks $HOME
 - find app/ -type f -name *.apk
 - cd app/build/outputs/apk/release
@@ -52,6 +49,7 @@ deploy:
   file: app/build/outputs/apk/release/gcr-cli-android-release.apk
   on:
     repo: nearlg/gcr-cli-android
+    tags: true
 before_install:
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then
     openssl aes-256-cbc -K $encrypted_8fb5c5130ba6_key -iv $encrypted_8fb5c5130ba6_iv
